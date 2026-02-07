@@ -172,6 +172,275 @@
                     "required": true
                 }
             ]
+        }, {
+            "id": "validation_demo",
+            "name": "Validation Demo API",
+            "description": "Demo-API zum Testen aller Validierungsfeatures (v1.0.8)",
+            "endpoint": "https://jsonplaceholder.typicode.com/posts",
+            "method": "POST",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [{
+                    "name": "age",
+                    "label": "Alter",
+                    "type": "number",
+                    "defaultValue": 25,
+                    "required": true,
+                    "min": 18,
+                    "max": 99,
+                    "minError": "Sie müssen mindestens 18 Jahre alt sein",
+                    "maxError": "Maximalalter ist 99 Jahre"
+                }, {
+                    "name": "salary",
+                    "label": "Jahresgehalt (€)",
+                    "type": "number",
+                    "defaultValue": 45000,
+                    "min": 0,
+                    "max": 1000000,
+                    "step": 1000,
+                    "required": false
+                }, {
+                    "name": "username",
+                    "label": "Benutzername",
+                    "type": "text",
+                    "required": true,
+                    "minLength": 3,
+                    "maxLength": 20,
+                    "pattern": "^[a-zA-Z0-9_]+$",
+                    "patternError": "Nur Buchstaben, Zahlen und Unterstriche erlaubt",
+                    "minLengthError": "Mindestens 3 Zeichen erforderlich",
+                    "helpText": "3-20 Zeichen, nur Buchstaben, Zahlen und Unterstriche",
+                    "exampleValue": "max_mustermann"
+                }, {
+                    "name": "email",
+                    "label": "E-Mail",
+                    "type": "text",
+                    "required": true,
+                    "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                    "patternError": "Bitte gültige E-Mail-Adresse eingeben",
+                    "placeholder": "name@example.com",
+                    "exampleValue": "max.mustermann@example.com"
+                }, {
+                    "name": "birthdate",
+                    "label": "Geburtsdatum",
+                    "type": "date",
+                    "required": true,
+                    "min": "1920-01-01",
+                    "max": "2010-12-31",
+                    "helpText": "Sie müssen zwischen 1920 und 2010 geboren sein",
+                    "exampleValue": "1990-05-15"
+                }, {
+                    "name": "postalCode",
+                    "label": "Postleitzahl (AT)",
+                    "type": "text",
+                    "required": true,
+                    "pattern": "^[1-9][0-9]{3}$",
+                    "patternError": "Österreichische PLZ: 4 Ziffern, nicht mit 0 beginnend",
+                    "minLength": 4,
+                    "maxLength": 4,
+                    "placeholder": "1010",
+                    "exampleValue": "1190"
+                }, {
+                    "name": "bio",
+                    "label": "Biografie",
+                    "type": "textarea",
+                    "required": false,
+                    "minLength": 10,
+                    "maxLength": 500,
+                    "rows": 5,
+                    "placeholder": "Erzählen Sie etwas über sich (10-500 Zeichen)...",
+                    "helpText": "Optional: Eine kurze Beschreibung über Sie",
+                    "exampleValue": "Ich bin ein Softwareentwickler aus Wien mit Leidenschaft für moderne Webtechnologien."
+                }, {
+                    "name": "country",
+                    "label": "Land",
+                    "type": "select",
+                    "defaultValue": "AT",
+                    "options": [{
+                            "value": "AT",
+                            "label": "Österreich"
+                        }, {
+                            "value": "DE",
+                            "label": "Deutschland"
+                        }, {
+                            "value": "CH",
+                            "label": "Schweiz"
+                        }
+                    ],
+                    "required": true
+                }
+            ]
+        }, {
+            "id": "advanced_demo",
+            "name": "Advanced Features Demo",
+            "description": "Demo für Sections & Conditional Fields (v1.0.8)",
+            "endpoint": "https://jsonplaceholder.typicode.com/posts",
+            "method": "POST",
+            "auth": {
+                "type": "none"
+            },
+            "sections": [{
+                    "title": "👤 Persönliche Daten",
+                    "description": "Grundlegende Informationen über Sie",
+                    "fields": [{
+                            "name": "firstName",
+                            "label": "Vorname",
+                            "type": "text",
+                            "required": true,
+                            "minLength": 2,
+                            "exampleValue": "Max"
+                        }, {
+                            "name": "lastName",
+                            "label": "Nachname",
+                            "type": "text",
+                            "required": true,
+                            "minLength": 2,
+                            "exampleValue": "Mustermann"
+                        }, {
+                            "name": "nationality",
+                            "label": "Staatsangehörigkeit",
+                            "type": "select",
+                            "required": true,
+                            "defaultValue": "AT",
+                            "options": [{
+                                    "value": "AT",
+                                    "label": "Österreich"
+                                }, {
+                                    "value": "DE",
+                                    "label": "Deutschland"
+                                }, {
+                                    "value": "CH",
+                                    "label": "Schweiz"
+                                }, {
+                                    "value": "OTHER",
+                                    "label": "Andere"
+                                }
+                            ]
+                        }, {
+                            "name": "otherNationality",
+                            "label": "Welche Staatsangehörigkeit?",
+                            "type": "text",
+                            "required": true,
+                            "showIf": {
+                                "field": "nationality",
+                                "value": "OTHER"
+                            },
+                            "helpText": "Nur sichtbar wenn 'Andere' ausgewählt",
+                            "exampleValue": "Italien"
+                        }
+                    ]
+                }, {
+                    "title": "🏠 Wohnsituation",
+                    "description": "Angaben zu Ihrem Wohnsitz",
+                    "fields": [{
+                            "name": "housingType",
+                            "label": "Wohnsituation",
+                            "type": "select",
+                            "required": true,
+                            "defaultValue": "RENT",
+                            "options": [{
+                                    "value": "RENT",
+                                    "label": "Miete"
+                                }, {
+                                    "value": "OWN",
+                                    "label": "Eigentum"
+                                }, {
+                                    "value": "PARENTS",
+                                    "label": "Bei Eltern"
+                                }
+                            ]
+                        }, {
+                            "name": "monthlyRent",
+                            "label": "Monatliche Miete (€)",
+                            "type": "number",
+                            "required": true,
+                            "min": 0,
+                            "max": 5000,
+                            "step": 50,
+                            "showIf": {
+                                "field": "housingType",
+                                "value": "RENT"
+                            },
+                            "helpText": "Nur bei Mietwohnung erforderlich",
+                            "exampleValue": 850
+                        }, {
+                            "name": "propertyValue",
+                            "label": "Immobilienwert (€)",
+                            "type": "number",
+                            "required": true,
+                            "min": 50000,
+                            "max": 5000000,
+                            "step": 10000,
+                            "showIf": {
+                                "field": "housingType",
+                                "value": "OWN"
+                            },
+                            "helpText": "Nur bei Eigentum erforderlich",
+                            "exampleValue": 350000
+                        }
+                    ]
+                }, {
+                    "title": "💰 Finanzen",
+                    "description": "Einkommens- und Vermögensverhältnisse",
+                    "fields": [{
+                            "name": "employmentStatus",
+                            "label": "Beschäftigungsstatus",
+                            "type": "select",
+                            "required": true,
+                            "defaultValue": "EMPLOYED",
+                            "options": [{
+                                    "value": "EMPLOYED",
+                                    "label": "Angestellt"
+                                }, {
+                                    "value": "SELFEMPLOYED",
+                                    "label": "Selbstständig"
+                                }, {
+                                    "value": "UNEMPLOYED",
+                                    "label": "Arbeitslos"
+                                }, {
+                                    "value": "STUDENT",
+                                    "label": "Student"
+                                }
+                            ]
+                        }, {
+                            "name": "monthlyIncome",
+                            "label": "Monatliches Nettoeinkommen (€)",
+                            "type": "number",
+                            "required": true,
+                            "min": 0,
+                            "max": 50000,
+                            "step": 100,
+                            "showIf": {
+                                "field": "employmentStatus",
+                                "value": ["EMPLOYED", "SELFEMPLOYED"]
+                            },
+                            "helpText": "Nur bei Beschäftigung erforderlich",
+                            "exampleValue": 3200
+                        }, {
+                            "name": "company",
+                            "label": "Arbeitgeber",
+                            "type": "text",
+                            "required": true,
+                            "showIf": {
+                                "field": "employmentStatus",
+                                "value": "EMPLOYED"
+                            },
+                            "exampleValue": "Beispiel GmbH"
+                        }, {
+                            "name": "businessName",
+                            "label": "Firmenname",
+                            "type": "text",
+                            "required": true,
+                            "showIf": {
+                                "field": "employmentStatus",
+                                "value": "SELFEMPLOYED"
+                            },
+                            "exampleValue": "Mustermann Consulting"
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

@@ -176,8 +176,61 @@ export function validateFields(fields, values) {
   const errors = {};
 
   fields.forEach(field => {
-    if (field.required && !values[field.name]) {
-      errors[field.name] = `${field.label} ist erforderlich`;
+    const value = values[field.name];
+
+    // Required-Validierung
+    if (field.required && (value === undefined || value === null || value === '')) {
+      errors[field.name] = field.requiredError || `${field.label} ist erforderlich`;
+      return;
+    }
+
+    // Weitere Validierungen nur wenn Wert vorhanden
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    // Number-Validierungen
+    if (field.type === 'number') {
+      const numValue = parseFloat(value);
+
+      if (isNaN(numValue)) {
+        errors[field.name] = `${field.label} muss eine Zahl sein`;
+        return;
+      }
+
+      if (field.min !== undefined && numValue < field.min) {
+        errors[field.name] = field.minError || `${field.label} muss mindestens ${field.min} sein`;
+        return;
+      }
+
+      if (field.max !== undefined && numValue > field.max) {
+        errors[field.name] = field.maxError || `${field.label} darf maximal ${field.max} sein`;
+        return;
+      }
+    }
+
+    // String-Validierungen
+    if (field.type === 'text' || field.type === 'textarea') {
+      const strValue = String(value);
+
+      if (field.minLength !== undefined && strValue.length < field.minLength) {
+        errors[field.name] = field.minLengthError || `${field.label} muss mindestens ${field.minLength} Zeichen lang sein`;
+        return;
+      }
+
+      if (field.maxLength !== undefined && strValue.length > field.maxLength) {
+        errors[field.name] = field.maxLengthError || `${field.label} darf maximal ${field.maxLength} Zeichen lang sein`;
+        return;
+      }
+
+      // Pattern/Regex-Validierung
+      if (field.pattern) {
+        const regex = new RegExp(field.pattern);
+        if (!regex.test(strValue)) {
+          errors[field.name] = field.patternError || `${field.label} hat ein ungültiges Format`;
+          return;
+        }
+      }
     }
   });
 
