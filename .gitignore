@@ -5,6 +5,9 @@ package-lock.json
 # Build-Artefakte (optional - dist könnte committed werden für Endnutzer)
 # dist/
 
+# Release
+release/
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
