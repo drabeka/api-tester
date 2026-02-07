@@ -95,7 +95,8 @@ function handleProxyRequest(req, res) {
 
       const proxyReq = protocol.request(targetUrl, {
         method: method,
-        headers: proxyHeaders
+        headers: proxyHeaders,
+        rejectUnauthorized: false // SSL-Zertifikate nicht streng prüfen (für Test-APIs)
       }, (proxyRes) => {
         let responseBody = '';
 
