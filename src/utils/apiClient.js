@@ -28,9 +28,12 @@ export async function makeApiRequest(options) {
   } = options;
 
   // Headers vorbereiten
-  const headers = {
-    'Content-Type': 'application/json',
-  };
+  const headers = {};
+
+  // Content-Type nur bei POST/PUT/PATCH setzen (wenn Body vorhanden)
+  if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   // Auth-Header hinzufügen
   if (authConfig) {
