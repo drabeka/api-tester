@@ -24,6 +24,7 @@ export async function makeApiRequest(options) {
     apiId,
     apiName,
     timeout = DEFAULT_TIMEOUT,
+    useProxy = true, // CORS-Proxy standardmäßig aktiviert
   } = options;
 
   // Headers vorbereiten
@@ -40,16 +41,6 @@ export async function makeApiRequest(options) {
     }
   }
 
-  const requestConfig = {
-    method,
-    headers,
-  };
-
-  // Body nur bei POST/PUT/PATCH hinzufügen
-  if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
-    requestConfig.body = JSON.stringify(payload);
-  }
-
   const startTime = Date.now();
   let response = null;
   let responseData = null;
@@ -59,9 +50,42 @@ export async function makeApiRequest(options) {
     // Timeout-Kontrolle
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
-    requestConfig.signal = controller.signal;
 
-    response = await fetch(endpoint, requestConfig);
+    let requestConfig;
+    let fetchUrl;
+
+    if (useProxy) {
+      // CORS-Proxy verwenden
+      fetchUrl = '/api/proxy';
+      requestConfig = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: endpoint,
+          method: method,
+          headers: headers,
+          body: ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase()) ? payload : undefined
+        }),
+        signal: controller.signal
+      };
+    } else {
+      // Direkter Request (kann CORS-Fehler verursachen)
+      fetchUrl = endpoint;
+      requestConfig = {
+        method,
+        headers,
+        signal: controller.signal
+      };
+
+      // Body nur bei POST/PUT/PATCH hinzufügen
+      if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
+        requestConfig.body = JSON.stringify(payload);
+      }
+    }
+
+    response = await fetch(fetchUrl, requestConfig);
     clearTimeout(timeoutId);
 
     // Response-Text lesen

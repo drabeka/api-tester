@@ -6,8 +6,10 @@
  */
 
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const { URL } = require('url');
 
 const PORT = process.env.PORT || 8080;
 const HOST = '0.0.0.0';
@@ -27,8 +29,109 @@ const MIME_TYPES = {
   '.map': 'application/json',
 };
 
+/**
+ * CORS-Proxy-Handler für API-Requests
+ * Leitet Requests an externe APIs weiter und fügt CORS-Header hinzu
+ */
+function handleProxyRequest(req, res) {
+  let body = '';
+
+  req.on('data', chunk => {
+    body += chunk.toString();
+  });
+
+  req.on('end', () => {
+    try {
+      const requestData = JSON.parse(body);
+      const targetUrl = requestData.url;
+      const method = requestData.method || 'POST';
+      const headers = requestData.headers || {};
+      const payload = requestData.body;
+
+      if (!targetUrl) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'URL ist erforderlich' }));
+        return;
+      }
+
+      const urlObj = new URL(targetUrl);
+      const protocol = urlObj.protocol === 'https:' ? https : http;
+
+      const proxyReq = protocol.request(targetUrl, {
+        method: method,
+        headers: {
+          ...headers,
+          'User-Agent': 'API-Test-Framework/1.0'
+        }
+      }, (proxyRes) => {
+        let responseBody = '';
+
+        proxyRes.on('data', chunk => {
+          responseBody += chunk;
+        });
+
+        proxyRes.on('end', () => {
+          // CORS-Header hinzufügen
+          res.writeHead(proxyRes.statusCode, {
+            'Content-Type': proxyRes.headers['content-type'] || 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key'
+          });
+          res.end(responseBody);
+
+          console.log(`[${new Date().toISOString()}] PROXY ${method} ${targetUrl} - ${proxyRes.statusCode}`);
+        });
+      });
+
+      proxyReq.on('error', (err) => {
+        console.error(`[${new Date().toISOString()}] PROXY ERROR:`, err.message);
+        res.writeHead(500, {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        });
+        res.end(JSON.stringify({ error: err.message }));
+      });
+
+      if (payload) {
+        proxyReq.write(typeof payload === 'string' ? payload : JSON.stringify(payload));
+      }
+
+      proxyReq.end();
+
+    } catch (err) {
+      console.error(`[${new Date().toISOString()}] PROXY PARSE ERROR:`, err.message);
+      res.writeHead(400, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      });
+      res.end(JSON.stringify({ error: 'Ungültige Request-Daten' }));
+    }
+  });
+}
+
 // HTTP-Server erstellen
 const server = http.createServer((req, res) => {
+  // CORS-Header für alle Anfragen setzen
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key'
+  };
+
+  // OPTIONS-Request (CORS Preflight)
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, corsHeaders);
+    res.end();
+    return;
+  }
+
+  // CORS-Proxy-Endpunkt
+  if (req.url === '/api/proxy' && req.method === 'POST') {
+    handleProxyRequest(req, res);
+    return;
+  }
+
   // URL normalisieren
   let filePath = req.url === '/' ? '/index.html' : req.url;
 
@@ -50,7 +153,7 @@ const server = http.createServer((req, res) => {
     if (err) {
       if (err.code === 'ENOENT') {
         // 404 - Datei nicht gefunden
-        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.writeHead(404, { 'Content-Type': 'text/html', ...corsHeaders });
         res.end(`
           <!DOCTYPE html>
           <html>
@@ -65,7 +168,7 @@ const server = http.createServer((req, res) => {
         console.log(`[${new Date().toISOString()}] 404 - ${req.url}`);
       } else {
         // 500 - Serverfehler
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.writeHead(500, { 'Content-Type': 'text/plain', ...corsHeaders });
         res.end('500 - Interner Serverfehler');
         console.error(`[${new Date().toISOString()}] 500 - ${req.url}:`, err);
       }
@@ -73,7 +176,8 @@ const server = http.createServer((req, res) => {
       // 200 - Erfolg
       res.writeHead(200, {
         'Content-Type': contentType,
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache',
+        ...corsHeaders
       });
       res.end(data);
       console.log(`[${new Date().toISOString()}] 200 - ${req.url}`);
