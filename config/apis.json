@@ -6,6 +6,8 @@
       "description": "APS Face New REST API für Kreditprüfung",
       "endpoint": "/api/aps_face_new",
       "method": "POST",
+      "contentType": "application/json",
+      "accept": "application/json",
       "auth": {
         "type": "none"
       },

@@ -70,6 +70,8 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
         authConfig,
         apiId: api.id,
         apiName: api.name,
+        contentType: api.contentType, // Custom Content-Type aus Config
+        accept: api.accept,           // Custom Accept Header aus Config
       });
 
       // Response an Parent weitergeben

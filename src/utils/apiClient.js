@@ -25,14 +25,25 @@ export async function makeApiRequest(options) {
     apiName,
     timeout = DEFAULT_TIMEOUT,
     useProxy = true, // CORS-Proxy standardmäßig aktiviert
+    contentType = 'application/json', // Default Content-Type
+    accept = '*/*', // Default Accept Header
   } = options;
 
   // Headers vorbereiten
   const headers = {};
 
-  // Content-Type nur bei POST/PUT/PATCH setzen (wenn Body vorhanden)
-  if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
-    headers['Content-Type'] = 'application/json';
+  // Accept Header immer setzen (aus Config oder Default)
+  if (accept) {
+    headers['Accept'] = accept;
+  }
+
+  // Prüfen ob payload Inhalt hat (nicht leer)
+  const hasPayload = payload &&
+    (typeof payload === 'string' ? payload.length > 0 : Object.keys(payload).length > 0);
+
+  // Content-Type nur bei POST/PUT/PATCH mit nicht-leerem Body setzen
+  if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase()) && hasPayload) {
+    headers['Content-Type'] = contentType; // Aus Config oder Default
   }
 
   // Auth-Header hinzufügen

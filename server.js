@@ -134,10 +134,16 @@ function handleProxyRequest(req, res) {
         }));
       });
 
-      if (payload && ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
+      // Body nur schreiben wenn Payload nicht leer ist
+      const hasPayload = payload &&
+        (typeof payload === 'string' ? payload.length > 0 : Object.keys(payload).length > 0);
+
+      if (hasPayload && ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
         const bodyData = typeof payload === 'string' ? payload : JSON.stringify(payload);
         proxyReq.write(bodyData);
         console.log('Request Body:', bodyData.substring(0, 200));
+      } else if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
+        console.log('Request Body: (empty)');
       }
 
       proxyReq.end();
