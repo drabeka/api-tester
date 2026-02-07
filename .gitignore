@@ -4,6 +4,7 @@ package-lock.json
 
 # Build-Artefakte (optional - dist könnte committed werden für Endnutzer)
 # dist/
+dist/*.map
 
 # Release
 release/

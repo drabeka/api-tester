@@ -6,6 +6,8 @@ import RequestForm from './components/RequestForm.jsx';
 import ResponseViewer from './components/ResponseViewer.jsx';
 import AuthConfig from './components/AuthConfig.jsx';
 import History from './components/History.jsx';
+import Tabs from './components/Tabs.jsx';
+import EmptyState from './components/EmptyState.jsx';
 
 function App() {
   const [apis, setApis] = useState([]);
@@ -81,13 +83,12 @@ function App() {
   if (error) {
     return (
       <div className="app-container">
-        <div className="error-container">
-          <h2>Fehler beim Laden</h2>
-          <p>{error}</p>
-          <button onClick={loadApis} className="btn-primary">
+        <EmptyState icon="❌" message="Fehler beim Laden">
+          <p style={{ marginTop: '10px' }}>{error}</p>
+          <button onClick={loadApis} className="btn-primary" style={{ marginTop: '15px' }}>
             Erneut versuchen
           </button>
-        </div>
+        </EmptyState>
       </div>
     );
   }
@@ -95,10 +96,9 @@ function App() {
   if (apis.length === 0) {
     return (
       <div className="app-container">
-        <div className="error-container">
-          <h2>Keine APIs konfiguriert</h2>
-          <p>Bitte fügen Sie API-Definitionen in <code>config/apis.json</code> hinzu.</p>
-        </div>
+        <EmptyState icon="⚙️" message="Keine APIs konfiguriert">
+          <p style={{ marginTop: '10px' }}>Bitte fügen Sie API-Definitionen in <code>config/apis.json</code> hinzu.</p>
+        </EmptyState>
       </div>
     );
   }
@@ -120,26 +120,15 @@ function App() {
 
       <div className="main-content">
         <div className="sidebar">
-          <div className="tabs">
-            <button
-              className={`tab ${activeTab === 'request' ? 'active' : ''}`}
-              onClick={() => setActiveTab('request')}
-            >
-              📝 Request
-            </button>
-            <button
-              className={`tab ${activeTab === 'auth' ? 'active' : ''}`}
-              onClick={() => setActiveTab('auth')}
-            >
-              🔐 Auth
-            </button>
-            <button
-              className={`tab ${activeTab === 'history' ? 'active' : ''}`}
-              onClick={() => setActiveTab('history')}
-            >
-              📜 Historie
-            </button>
-          </div>
+          <Tabs
+            activeTab={activeTab}
+            onChange={setActiveTab}
+            tabs={[
+              { id: 'request', label: '📝 Request' },
+              { id: 'auth', label: '🔐 Auth' },
+              { id: 'history', label: '📜 Historie' }
+            ]}
+          />
 
           <div className="tab-content">
             {activeTab === 'request' && (

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { makeApiRequest, validateFields } from '../utils/apiClient.js';
 import { getAuthConfig } from '../utils/storage.js';
+import FormField from './FormField.jsx';
+import EmptyState from './EmptyState.jsx';
 
 /**
  * Dynamisches Formular für API-Requests
@@ -100,64 +102,37 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
   if (!api) {
     return (
       <div className="request-form">
-        <p>Bitte wählen Sie eine API aus.</p>
+        <EmptyState icon="📝" message="Bitte wählen Sie eine API aus." />
       </div>
     );
   }
 
   return (
     <form className="request-form" onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
-      <h3>{api.name} – Request</h3>
+      {api.fields.map(field => {
+        const handleFieldChange = (e) => {
+          const value = field.type === 'number'
+            ? (e.target.value === '' ? '' : parseFloat(e.target.value))
+            : e.target.value;
+          handleChange(field.name, value);
+        };
 
-      {api.fields.map(field => (
-        <div key={field.name} className="form-group">
-          <label htmlFor={field.name}>
-            {field.label}
-            {field.required && <span className="required">*</span>}
-          </label>
-
-          {field.type === 'select' ? (
-            <select
-              id={field.name}
-              value={formData[field.name] || ''}
-              onChange={(e) => handleChange(field.name, e.target.value)}
-              required={field.required}
-            >
-              {field.options.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          ) : field.type === 'textarea' ? (
-            <textarea
-              id={field.name}
-              value={formData[field.name] || ''}
-              onChange={(e) => handleChange(field.name, e.target.value)}
-              required={field.required}
-              rows={4}
-            />
-          ) : (
-            <input
-              type={field.type}
-              id={field.name}
-              value={formData[field.name] || ''}
-              onChange={(e) => {
-                const value = field.type === 'number'
-                  ? (e.target.value === '' ? '' : parseFloat(e.target.value))
-                  : e.target.value;
-                handleChange(field.name, value);
-              }}
-              step={field.step}
-              required={field.required}
-            />
-          )}
-
-          {errors[field.name] && (
-            <span className="error-message">{errors[field.name]}</span>
-          )}
-        </div>
-      ))}
+        return (
+          <FormField
+            key={field.name}
+            label={field.label}
+            type={field.type}
+            name={field.name}
+            value={formData[field.name]}
+            onChange={handleFieldChange}
+            required={field.required}
+            error={errors[field.name]}
+            step={field.step}
+            rows={field.rows || 4}
+            options={field.options}
+          />
+        );
+      })}
 
       <div className="form-actions">
         <button

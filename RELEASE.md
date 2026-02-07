@@ -1,5 +1,7 @@
 # GitHub Release erstellen
 
+> **📚 Historische Release Notes:** Siehe [docs/releases/](docs/releases/) für alle vorherigen Versionen (v1.0.1 - v1.0.6)
+
 Der Git-Tag **v1.0.0** wurde bereits erstellt und gepusht.
 
 ## Release auf GitHub erstellen

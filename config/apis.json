@@ -62,10 +62,16 @@
                     "label": "Mitkreditnehmer (JN_MITKREDITNEHMER)",
                     "type": "select",
                     "defaultValue": "N",
-                    "options": [{
+                    "options": [
+                        {
+                            "value": " ",
+                            "label": "unbekannt"
+                        }, 
+                        {
                             "value": "N",
                             "label": "Nein"
-                        }, {
+                        }, 
+                        {
                             "value": "J",
                             "label": "Ja"
                         }

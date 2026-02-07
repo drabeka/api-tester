@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuthConfig, setAuthConfig, clearAuthConfig } from '../utils/storage.js';
+import FormField from './FormField.jsx';
+import EmptyState from './EmptyState.jsx';
 
 /**
  * Auth-Konfiguration für APIs
@@ -60,7 +62,7 @@ export default function AuthConfig({ apiId }) {
   if (!apiId) {
     return (
       <div className="auth-config">
-        <p>Bitte wählen Sie zuerst eine API aus.</p>
+        <EmptyState icon="🔐" message="Bitte wählen Sie zuerst eine API aus." />
       </div>
     );
   }
@@ -68,60 +70,57 @@ export default function AuthConfig({ apiId }) {
   return (
     <div className="auth-config">
       <h3>Authentifizierung</h3>
-      <div className="form-group">
-        <label htmlFor="auth-type">Auth-Typ:</label>
-        <select
-          id="auth-type"
-          value={authType}
-          onChange={(e) => setAuthType(e.target.value)}
-        >
-          <option value="none">Keine</option>
-          <option value="bearer">Bearer Token</option>
-          <option value="apikey">API Key</option>
-        </select>
-      </div>
+
+      <FormField
+        label="Auth-Typ:"
+        type="select"
+        name="auth-type"
+        value={authType}
+        onChange={(e) => setAuthType(e.target.value)}
+        options={[
+          { value: 'none', label: 'Keine' },
+          { value: 'bearer', label: 'Bearer Token' },
+          { value: 'apikey', label: 'API Key' }
+        ]}
+      />
 
       {authType === 'bearer' && (
-        <div className="form-group">
-          <label htmlFor="bearer-token">Bearer Token:</label>
-          <input
-            type="text"
-            id="bearer-token"
-            value={bearerToken}
-            onChange={(e) => setBearerToken(e.target.value)}
-            placeholder="Token eingeben..."
-          />
+        <FormField
+          label="Bearer Token:"
+          type="text"
+          name="bearer-token"
+          value={bearerToken}
+          onChange={(e) => setBearerToken(e.target.value)}
+          placeholder="Token eingeben..."
+        >
           <small className="warning">
             ⚠️ Nur für Testzwecke! Token wird in LocalStorage gespeichert.
           </small>
-        </div>
+        </FormField>
       )}
 
       {authType === 'apikey' && (
         <>
-          <div className="form-group">
-            <label htmlFor="api-key">API Key:</label>
-            <input
-              type="text"
-              id="api-key"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="API Key eingeben..."
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="header-name">Header-Name:</label>
-            <input
-              type="text"
-              id="header-name"
-              value={headerName}
-              onChange={(e) => setHeaderName(e.target.value)}
-              placeholder="z.B. X-API-Key"
-            />
-          </div>
-          <small className="warning">
-            ⚠️ Nur für Testzwecke! Key wird in LocalStorage gespeichert.
-          </small>
+          <FormField
+            label="API Key:"
+            type="text"
+            name="api-key"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder="API Key eingeben..."
+          />
+          <FormField
+            label="Header-Name:"
+            type="text"
+            name="header-name"
+            value={headerName}
+            onChange={(e) => setHeaderName(e.target.value)}
+            placeholder="z.B. X-API-Key"
+          >
+            <small className="warning">
+              ⚠️ Nur für Testzwecke! Key wird in LocalStorage gespeichert.
+            </small>
+          </FormField>
         </>
       )}
 

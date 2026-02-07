@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { formatResponse } from '../utils/apiClient.js';
+import Badge from './Badge.jsx';
 
 /**
  * Response-Viewer mit Syntax-Highlighting
@@ -45,19 +46,17 @@ export default function ResponseViewer({ response }) {
     );
   }
 
-  const statusClass = response.ok ? 'status-success' : 'status-error';
-
   return (
     <div className="response-viewer">
       <div className="response-header">
         <h3>Response</h3>
-        <div className={`status-badge ${statusClass}`}>
+        <Badge variant="status" type={response.ok ? 'success' : 'error'}>
           HTTP {response.status} {response.statusText}
-        </div>
+        </Badge>
         {response.duration && (
-          <div className="duration-badge">
+          <Badge variant="duration">
             {response.duration}ms
-          </div>
+          </Badge>
         )}
       </div>
 

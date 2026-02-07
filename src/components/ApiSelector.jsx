@@ -17,7 +17,7 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
   return (
     <div className="api-selector">
       <label htmlFor="api-select">
-        <strong>API auswählen:</strong>
+        API auswählen:
       </label>
       <select
         id="api-select"

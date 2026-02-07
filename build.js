@@ -33,16 +33,31 @@ const buildOptions = {
   logLevel: 'info',
 };
 
+// CSS kopieren
+function copyCSS() {
+  const srcCSS = path.join(__dirname, 'src/styles/main.css');
+  const destCSS = path.join(__dirname, 'dist/styles.css');
+
+  if (fs.existsSync(srcCSS)) {
+    fs.copyFileSync(srcCSS, destCSS);
+    console.log('📝 CSS kopiert: dist/styles.css');
+  } else {
+    console.warn('⚠️  CSS-Datei nicht gefunden: src/styles/main.css');
+  }
+}
+
 async function build() {
   try {
     if (isWatch) {
       console.log('👀 Watch mode aktiviert...');
       const ctx = await esbuild.context(buildOptions);
       await ctx.watch();
+      copyCSS();
       console.log('✅ Watching for changes...');
     } else {
       console.log('🔨 Building...');
       await esbuild.build(buildOptions);
+      copyCSS();
       console.log('✅ Build erfolgreich!');
       console.log(`📦 Bundle erstellt: dist/bundle.js`);
     }

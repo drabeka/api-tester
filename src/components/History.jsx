@@ -6,6 +6,8 @@ import {
   toggleFavorite,
   isFavorite,
 } from '../utils/storage.js';
+import EmptyState from './EmptyState.jsx';
+import HistoryItem from './HistoryItem.jsx';
 
 /**
  * Request-Historie mit Favoriten
@@ -57,18 +59,6 @@ export default function History({ onReplay }) {
     });
   };
 
-  const formatTimestamp = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleString('de-DE', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  };
-
   const filteredHistory = filter === 'favorites'
     ? history.filter(item => favorites.includes(item.id))
     : history;
@@ -104,61 +94,22 @@ export default function History({ onReplay }) {
       </div>
 
       {filteredHistory.length === 0 ? (
-        <p className="no-history">
-          {filter === 'favorites' ? 'Keine Favoriten vorhanden.' : 'Noch keine Requests in der Historie.'}
-        </p>
+        <EmptyState
+          icon={filter === 'favorites' ? '⭐' : '📜'}
+          message={filter === 'favorites' ? 'Keine Favoriten vorhanden.' : 'Noch keine Requests in der Historie.'}
+        />
       ) : (
         <div className="history-list">
-          {filteredHistory.map(item => {
-            const statusClass = item.status >= 200 && item.status < 300
-              ? 'status-success'
-              : 'status-error';
-
-            return (
-              <div key={item.id} className="history-item">
-                <div className="history-item-header">
-                  <span className="api-name">{item.apiName}</span>
-                  <span className={`status ${statusClass}`}>
-                    {item.status} {item.statusText}
-                  </span>
-                  <span className="timestamp">
-                    {formatTimestamp(item.timestamp)}
-                  </span>
-                </div>
-
-                <div className="history-item-details">
-                  <div className="endpoint">
-                    <strong>{item.method}</strong> {item.endpoint}
-                  </div>
-                  {item.duration && (
-                    <div className="duration">{item.duration}ms</div>
-                  )}
-                </div>
-
-                <div className="history-item-actions">
-                  <button
-                    className="btn-icon"
-                    onClick={() => handleToggleFavorite(item.id)}
-                    title={favorites.includes(item.id) ? 'Favorit entfernen' : 'Als Favorit markieren'}
-                  >
-                    {favorites.includes(item.id) ? '⭐' : '☆'}
-                  </button>
-                  <button
-                    className="btn-small btn-primary"
-                    onClick={() => handleReplay(item)}
-                  >
-                    ↻ Wiederholen
-                  </button>
-                  <button
-                    className="btn-small btn-danger"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    🗑️ Löschen
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          {filteredHistory.map(item => (
+            <HistoryItem
+              key={item.id}
+              item={item}
+              isFavorite={favorites.includes(item.id)}
+              onToggleFavorite={handleToggleFavorite}
+              onReplay={handleReplay}
+              onDelete={handleDelete}
+            />
+          ))}
         </div>
       )}
     </div>
