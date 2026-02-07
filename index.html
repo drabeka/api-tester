@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>APS Face New – REST API Frontend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        pre {
+            background: #222;
+            color: #0f0;
+            padding: 15px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+<h1>APS Face New – Anfrage</h1>
+
+<form id="apiForm">
+    <label>Ausbildung (DOM_AUSBILDUNG)</label>
+    <input type="text" id="DOM_AUSBILDUNG" value="ABHS">
+
+    <label>Berufsstand (DOM_BERUFSSTAND)</label>
+    <input type="text" id="DOM_BERUFSSTAND" value="UANS">
+
+    <label>Branche Arbeitgeber (DOM_BRANCHE_ARBEITGEBER)</label>
+    <input type="text" id="DOM_BRANCHE_ARBEITGEBER" value="D35">
+
+    <label>Postleitzahl (COD_POSTLEITZAHL)</label>
+    <input type="text" id="COD_POSTLEITZAHL" value="1190">
+
+    <label>Wohnart (DOM_WOHNART)</label>
+    <input type="text" id="DOM_WOHNART" value="HAUS">
+
+    <label>Überschuss Haushalt (BET_UEBERSCHUSS_HAUSHALT_AKT)</label>
+    <input type="number" step="0.01" id="BET_UEBERSCHUSS_HAUSHALT_AKT" value="1500.3">
+
+    <label>Monate seit Mahnung 1 (ANZ_MONATE_SEIT_MAHNUNG_1_MIN)</label>
+    <input type="number" id="ANZ_MONATE_SEIT_MAHNUNG_1_MIN" value="-1">
+
+    <label>Anzahl Kreditkonten (ANZ_KREDITKONTEN)</label>
+    <input type="number" id="ANZ_KREDITKONTEN" value="-1">
+
+    <label>Mitkreditnehmer (JN_MITKREDITNEHMER)</label>
+    <select id="JN_MITKREDITNEHMER">
+        <option value="N">Nein</option>
+        <option value="J">Ja</option>
+    </select>
+
+    <label>Verfügbarer Betrag (BET_VERFUEGBARER_BETRAG)</label>
+    <input type="number" step="0.01" id="BET_VERFUEGBARER_BETRAG" value="0.0">
+
+    <button type="submit">API aufrufen</button>
+</form>
+
+<h2>Response</h2>
+<pre id="response">Noch keine Anfrage gesendet.</pre>
+
+<script>
+    const apiUrl = "/api/aps_face_new";
+
+    document.getElementById("apiForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const payload = {
+            DOM_AUSBILDUNG: document.getElementById("DOM_AUSBILDUNG").value,
+            DOM_BERUFSSTAND: document.getElementById("DOM_BERUFSSTAND").value,
+            DOM_BRANCHE_ARBEITGEBER: document.getElementById("DOM_BRANCHE_ARBEITGEBER").value,
+            COD_POSTLEITZAHL: document.getElementById("COD_POSTLEITZAHL").value,
+            DOM_WOHNART: document.getElementById("DOM_WOHNART").value,
+            BET_UEBERSCHUSS_HAUSHALT_AKT: parseFloat(document.getElementById("BET_UEBERSCHUSS_HAUSHALT_AKT").value),
+            ANZ_MONATE_SEIT_MAHNUNG_1_MIN: parseInt(document.getElementById("ANZ_MONATE_SEIT_MAHNUNG_1_MIN").value),
+            ANZ_KREDITKONTEN: parseInt(document.getElementById("ANZ_KREDITKONTEN").value),
+            JN_MITKREDITNEHMER: document.getElementById("JN_MITKREDITNEHMER").value,
+            BET_VERFUEGBARER_BETRAG: parseFloat(document.getElementById("BET_VERFUEGBARER_BETRAG").value)
+        };
+
+        document.getElementById("response").textContent = "Sende Anfrage...";
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const text = await response.text();
+
+            document.getElementById("response").textContent =
+                "HTTP Status: " + response.status + "\n\n" + text;
+        } catch (error) {
+            document.getElementById("response").textContent =
+                "Fehler beim Aufruf:\n" + error;
+        }
+    });
+</script>
+
+</body>
+</html>
