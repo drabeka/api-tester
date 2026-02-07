@@ -48,8 +48,14 @@ function handleProxyRequest(req, res) {
       const headers = requestData.headers || {};
       const payload = requestData.body;
 
+      console.log(`[${new Date().toISOString()}] PROXY REQUEST: ${method} ${targetUrl}`);
+      console.log('Headers:', JSON.stringify(headers, null, 2));
+
       if (!targetUrl) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.writeHead(400, {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        });
         res.end(JSON.stringify({ error: 'URL ist erforderlich' }));
         return;
       }
@@ -57,12 +63,39 @@ function handleProxyRequest(req, res) {
       const urlObj = new URL(targetUrl);
       const protocol = urlObj.protocol === 'https:' ? https : http;
 
+      // Headers vorbereiten - nur relevante Headers weitergeben
+      const proxyHeaders = {
+        'User-Agent': 'API-Test-Framework/1.0',
+        'Accept': headers['Accept'] || '*/*'
+      };
+
+      // Content-Type nur bei POST/PUT/PATCH
+      if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase()) && headers['Content-Type']) {
+        proxyHeaders['Content-Type'] = headers['Content-Type'];
+      }
+
+      // Auth-Header weitergeben
+      if (headers['Authorization']) {
+        proxyHeaders['Authorization'] = headers['Authorization'];
+      }
+
+      // API-Key Header weitergeben
+      if (headers['X-API-Key']) {
+        proxyHeaders['X-API-Key'] = headers['X-API-Key'];
+      }
+
+      // Custom Header weitergeben (für andere API-Key Formate)
+      Object.keys(headers).forEach(key => {
+        if (key.toLowerCase().startsWith('x-') && !proxyHeaders[key]) {
+          proxyHeaders[key] = headers[key];
+        }
+      });
+
+      console.log('Proxy Headers:', JSON.stringify(proxyHeaders, null, 2));
+
       const proxyReq = protocol.request(targetUrl, {
         method: method,
-        headers: {
-          ...headers,
-          'User-Agent': 'API-Test-Framework/1.0'
-        }
+        headers: proxyHeaders
       }, (proxyRes) => {
         let responseBody = '';
 
@@ -81,31 +114,44 @@ function handleProxyRequest(req, res) {
           res.end(responseBody);
 
           console.log(`[${new Date().toISOString()}] PROXY ${method} ${targetUrl} - ${proxyRes.statusCode}`);
+          if (proxyRes.statusCode >= 400) {
+            console.log('Error Response:', responseBody.substring(0, 500));
+          }
         });
       });
 
       proxyReq.on('error', (err) => {
         console.error(`[${new Date().toISOString()}] PROXY ERROR:`, err.message);
+        console.error('Full error:', err);
         res.writeHead(500, {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
         });
-        res.end(JSON.stringify({ error: err.message }));
+        res.end(JSON.stringify({
+          error: err.message,
+          details: 'Proxy request failed - check server logs'
+        }));
       });
 
-      if (payload) {
-        proxyReq.write(typeof payload === 'string' ? payload : JSON.stringify(payload));
+      if (payload && ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
+        const bodyData = typeof payload === 'string' ? payload : JSON.stringify(payload);
+        proxyReq.write(bodyData);
+        console.log('Request Body:', bodyData.substring(0, 200));
       }
 
       proxyReq.end();
 
     } catch (err) {
       console.error(`[${new Date().toISOString()}] PROXY PARSE ERROR:`, err.message);
+      console.error('Stack:', err.stack);
       res.writeHead(400, {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       });
-      res.end(JSON.stringify({ error: 'Ungültige Request-Daten' }));
+      res.end(JSON.stringify({
+        error: 'Ungültige Request-Daten',
+        details: err.message
+      }));
     }
   });
 }
