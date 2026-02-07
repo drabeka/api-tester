@@ -1,0 +1,15 @@
+{
+  "name": "api-tester",
+  "version": "1.0.0",
+  "description": "Flexibles API-Test-Framework mit React",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch"
+  },
+  "keywords": ["api", "testing", "rest", "react"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.19.0"
+  }
+}

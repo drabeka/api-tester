@@ -1,0 +1,92 @@
+{
+  "apis": [
+    {
+      "id": "aps_face_new",
+      "name": "APS Face New",
+      "description": "APS Face New REST API für Kreditprüfung",
+      "endpoint": "/api/aps_face_new",
+      "method": "POST",
+      "auth": {
+        "type": "none"
+      },
+      "fields": [
+        {
+          "name": "DOM_AUSBILDUNG",
+          "label": "Ausbildung (DOM_AUSBILDUNG)",
+          "type": "text",
+          "defaultValue": "ABHS",
+          "required": true
+        },
+        {
+          "name": "DOM_BERUFSSTAND",
+          "label": "Berufsstand (DOM_BERUFSSTAND)",
+          "type": "text",
+          "defaultValue": "UANS",
+          "required": true
+        },
+        {
+          "name": "DOM_BRANCHE_ARBEITGEBER",
+          "label": "Branche Arbeitgeber (DOM_BRANCHE_ARBEITGEBER)",
+          "type": "text",
+          "defaultValue": "D35",
+          "required": true
+        },
+        {
+          "name": "COD_POSTLEITZAHL",
+          "label": "Postleitzahl (COD_POSTLEITZAHL)",
+          "type": "text",
+          "defaultValue": "1190",
+          "required": true
+        },
+        {
+          "name": "DOM_WOHNART",
+          "label": "Wohnart (DOM_WOHNART)",
+          "type": "text",
+          "defaultValue": "HAUS",
+          "required": true
+        },
+        {
+          "name": "BET_UEBERSCHUSS_HAUSHALT_AKT",
+          "label": "Überschuss Haushalt (BET_UEBERSCHUSS_HAUSHALT_AKT)",
+          "type": "number",
+          "defaultValue": 1500.3,
+          "step": 0.01,
+          "required": true
+        },
+        {
+          "name": "ANZ_MONATE_SEIT_MAHNUNG_1_MIN",
+          "label": "Monate seit Mahnung 1 (ANZ_MONATE_SEIT_MAHNUNG_1_MIN)",
+          "type": "number",
+          "defaultValue": -1,
+          "required": true
+        },
+        {
+          "name": "ANZ_KREDITKONTEN",
+          "label": "Anzahl Kreditkonten (ANZ_KREDITKONTEN)",
+          "type": "number",
+          "defaultValue": -1,
+          "required": true
+        },
+        {
+          "name": "JN_MITKREDITNEHMER",
+          "label": "Mitkreditnehmer (JN_MITKREDITNEHMER)",
+          "type": "select",
+          "defaultValue": "N",
+          "options": [
+            { "value": "N", "label": "Nein" },
+            { "value": "J", "label": "Ja" }
+          ],
+          "required": true
+        },
+        {
+          "name": "BET_VERFUEGBARER_BETRAG",
+          "label": "Verfügbarer Betrag (BET_VERFUEGBARER_BETRAG)",
+          "type": "number",
+          "defaultValue": 0.0,
+          "step": 0.01,
+          "required": true
+        }
+      ]
+    }
+  ]
+}

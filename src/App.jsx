@@ -1,0 +1,177 @@
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
+
+import ApiSelector from './components/ApiSelector.jsx';
+import RequestForm from './components/RequestForm.jsx';
+import ResponseViewer from './components/ResponseViewer.jsx';
+import AuthConfig from './components/AuthConfig.jsx';
+import History from './components/History.jsx';
+
+function App() {
+  const [apis, setApis] = useState([]);
+  const [selectedApi, setSelectedApi] = useState(null);
+  const [response, setResponse] = useState(null);
+  const [initialFormValues, setInitialFormValues] = useState(null);
+  const [activeTab, setActiveTab] = useState('request'); // 'request' | 'auth' | 'history'
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // API-Konfiguration laden
+  useEffect(() => {
+    loadApis();
+  }, []);
+
+  const loadApis = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/config/apis.json');
+
+      if (!response.ok) {
+        throw new Error(`Fehler beim Laden der APIs: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setApis(data.apis || []);
+
+      // Erste API automatisch auswählen
+      if (data.apis && data.apis.length > 0) {
+        setSelectedApi(data.apis[0]);
+      }
+
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+      console.error('Fehler beim Laden der APIs:', err);
+    }
+  };
+
+  const handleApiSelect = (api) => {
+    setSelectedApi(api);
+    setResponse(null);
+    setInitialFormValues(null);
+    setActiveTab('request'); // Zurück zum Request-Tab
+  };
+
+  const handleResponse = (responseData) => {
+    setResponse(responseData);
+  };
+
+  const handleReplayFromHistory = (replayData) => {
+    // API auswählen
+    const api = apis.find(a => a.id === replayData.apiId);
+    if (api) {
+      setSelectedApi(api);
+      setInitialFormValues(replayData.payload);
+      setActiveTab('request');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="app-container">
+        <div className="loading">
+          <div className="spinner"></div>
+          <p>Lade API-Konfiguration...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app-container">
+        <div className="error-container">
+          <h2>Fehler beim Laden</h2>
+          <p>{error}</p>
+          <button onClick={loadApis} className="btn-primary">
+            Erneut versuchen
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (apis.length === 0) {
+    return (
+      <div className="app-container">
+        <div className="error-container">
+          <h2>Keine APIs konfiguriert</h2>
+          <p>Bitte fügen Sie API-Definitionen in <code>config/apis.json</code> hinzu.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-container">
+      <header className="app-header">
+        <h1>🚀 API Test Framework</h1>
+        <p className="subtitle">Flexibles Testing für REST APIs</p>
+      </header>
+
+      <div className="api-selector-container">
+        <ApiSelector
+          apis={apis}
+          selectedApiId={selectedApi?.id}
+          onSelect={handleApiSelect}
+        />
+      </div>
+
+      <div className="main-content">
+        <div className="sidebar">
+          <div className="tabs">
+            <button
+              className={`tab ${activeTab === 'request' ? 'active' : ''}`}
+              onClick={() => setActiveTab('request')}
+            >
+              📝 Request
+            </button>
+            <button
+              className={`tab ${activeTab === 'auth' ? 'active' : ''}`}
+              onClick={() => setActiveTab('auth')}
+            >
+              🔐 Auth
+            </button>
+            <button
+              className={`tab ${activeTab === 'history' ? 'active' : ''}`}
+              onClick={() => setActiveTab('history')}
+            >
+              📜 Historie
+            </button>
+          </div>
+
+          <div className="tab-content">
+            {activeTab === 'request' && (
+              <RequestForm
+                api={selectedApi}
+                onResponse={handleResponse}
+                initialValues={initialFormValues}
+              />
+            )}
+
+            {activeTab === 'auth' && (
+              <AuthConfig apiId={selectedApi?.id} />
+            )}
+
+            {activeTab === 'history' && (
+              <History onReplay={handleReplayFromHistory} />
+            )}
+          </div>
+        </div>
+
+        <div className="response-panel">
+          <ResponseViewer response={response} />
+        </div>
+      </div>
+
+      <footer className="app-footer">
+        <p>API Test Framework v1.0 | React + esbuild</p>
+      </footer>
+    </div>
+  );
+}
+
+// App mounten
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
