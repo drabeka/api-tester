@@ -33,8 +33,16 @@ function processParameters(endpoint, payload, fields) {
         break;
 
       case 'query':
-        // Füge zu Query-String hinzu
-        queryParams.push(`${encodeURIComponent(field.name)}=${encodeURIComponent(value)}`);
+        // Füge zu Query-String hinzu - Arrays als repeated params
+        if (Array.isArray(value)) {
+          value.forEach(v => {
+            if (v !== undefined && v !== null && v !== '') {
+              queryParams.push(`${encodeURIComponent(field.name)}=${encodeURIComponent(v)}`);
+            }
+          });
+        } else {
+          queryParams.push(`${encodeURIComponent(field.name)}=${encodeURIComponent(value)}`);
+        }
         break;
 
       case 'header':
@@ -86,7 +94,7 @@ export async function makeApiRequest(options) {
   } = options;
 
   // Parameter nach Typ verarbeiten
-  const { finalEndpoint, bodyPayload, customHeaders } = processParameters(endpoint, payload, fields);
+  let { finalEndpoint, bodyPayload, customHeaders } = processParameters(endpoint, payload, fields);
 
   // Headers vorbereiten
   const headers = { ...customHeaders };
@@ -105,12 +113,34 @@ export async function makeApiRequest(options) {
     headers['Content-Type'] = contentType; // Aus Config oder Default
   }
 
-  // Auth-Header hinzufügen
+  // Auth hinzufügen
   if (authConfig) {
     if (authConfig.type === 'bearer') {
       headers['Authorization'] = `Bearer ${authConfig.token}`;
     } else if (authConfig.type === 'apikey') {
-      headers[authConfig.headerName || 'X-API-Key'] = authConfig.apiKey;
+      const keyName = authConfig.keyName || authConfig.headerName || 'X-API-Key';
+      const keyLocation = authConfig.keyLocation || 'header';
+      const keyValue = authConfig.apiKey;
+
+      if (keyValue) {
+        switch (keyLocation) {
+          case 'query': {
+            // API-Key als Query-Parameter
+            const separator = finalEndpoint.includes('?') ? '&' : '?';
+            finalEndpoint += `${separator}${encodeURIComponent(keyName)}=${encodeURIComponent(keyValue)}`;
+            break;
+          }
+          case 'cookie':
+            // API-Key als Cookie
+            headers['Cookie'] = `${keyName}=${keyValue}`;
+            break;
+          case 'header':
+          default:
+            // API-Key als Header
+            headers[keyName] = keyValue;
+            break;
+        }
+      }
     }
   }
 

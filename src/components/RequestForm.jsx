@@ -25,6 +25,8 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
       allFields.forEach(field => {
         if (initialValues && initialValues[field.name] !== undefined) {
           defaultData[field.name] = initialValues[field.name];
+        } else if (field.type === 'array') {
+          defaultData[field.name] = field.defaultValue !== undefined ? field.defaultValue : [];
         } else {
           defaultData[field.name] = field.defaultValue !== undefined ? field.defaultValue : '';
         }
@@ -138,6 +140,8 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
 
       if (valueToUse !== undefined) {
         exampleData[field.name] = valueToUse;
+      } else if (field.type === 'array' && !exampleData[field.name]) {
+        exampleData[field.name] = [];
       }
     });
 
@@ -182,6 +186,10 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
       handleChange(field.name, value);
     };
 
+    const handleArrayFieldChange = (newArray) => {
+      handleChange(field.name, newArray);
+    };
+
     return (
       <FormField
         key={field.name}
@@ -190,6 +198,7 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
         name={field.name}
         value={formData[field.name]}
         onChange={handleFieldChange}
+        onArrayChange={handleArrayFieldChange}
         required={field.required}
         error={errors[field.name]}
         placeholder={field.placeholder}
@@ -203,6 +212,9 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
         maxLength={field.maxLength}
         pattern={field.pattern}
         paramType={field.paramType || 'body'}
+        itemType={field.itemType}
+        itemOptions={field.itemOptions}
+        itemFields={field.itemFields}
       />
     );
   };

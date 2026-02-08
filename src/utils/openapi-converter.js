@@ -165,12 +165,30 @@ function extractFieldsFromParameters(parameters, spec) {
           { value: 'false', label: 'false' },
         ];
         break;
+      case 'array':
+        field.type = 'array';
+        if (schema.items) {
+          if (schema.items.enum) {
+            field.itemType = 'select';
+            field.itemOptions = schema.items.enum.map(v => ({
+              value: v.toString(),
+              label: v.toString(),
+            }));
+          } else if (schema.items.type === 'integer' || schema.items.type === 'number') {
+            field.itemType = 'number';
+          } else {
+            field.itemType = 'text';
+          }
+        } else {
+          field.itemType = 'text';
+        }
+        break;
       default:
         field.type = 'text';
     }
 
-    // Enum → Select
-    if (schema.enum) {
+    // Enum → Select (nur für nicht-Arrays)
+    if (schema.enum && field.type !== 'array') {
       field.type = 'select';
       field.options = schema.enum.map(value => ({
         value: value.toString(),
@@ -229,7 +247,7 @@ function convertSchemaToFields(schema, required = [], spec = null) {
       resolvedFieldSchema = resolveRef(fieldSchema.$ref, spec);
     }
 
-    const field = convertPropertyToField(fieldName, resolvedFieldSchema, requiredFields.includes(fieldName));
+    const field = convertPropertyToField(fieldName, resolvedFieldSchema, requiredFields.includes(fieldName), spec);
     if (field) {
       fields.push(field);
     }
@@ -241,7 +259,7 @@ function convertSchemaToFields(schema, required = [], spec = null) {
 /**
  * Konvertiert eine einzelne Property zu Field-Definition
  */
-function convertPropertyToField(name, schema, isRequired) {
+function convertPropertyToField(name, schema, isRequired, spec = null) {
   const field = {
     name: name,
     label: schema.title || formatLabel(name),
@@ -263,6 +281,38 @@ function convertPropertyToField(name, schema, isRequired) {
         { value: true, label: 'Ja' },
         { value: false, label: 'Nein' },
       ];
+      break;
+    case 'array':
+      field.type = 'array';
+      if (schema.items) {
+        let itemSchema = schema.items;
+        // Resolve $ref in items
+        if (itemSchema.$ref && spec) {
+          itemSchema = resolveRef(itemSchema.$ref, spec);
+        }
+        if (itemSchema) {
+          if (itemSchema.type === 'object' || itemSchema.properties) {
+            // Object-Array: Items haben Sub-Felder
+            field.itemType = 'object';
+            field.itemFields = convertSchemaToFields(itemSchema, [], spec);
+          } else if (itemSchema.enum) {
+            // Enum-Array: Items sind Select-Felder
+            field.itemType = 'select';
+            field.itemOptions = itemSchema.enum.map(v => ({
+              value: v.toString(),
+              label: v.toString(),
+            }));
+          } else if (itemSchema.type === 'integer' || itemSchema.type === 'number') {
+            field.itemType = 'number';
+          } else {
+            field.itemType = 'text';
+          }
+        } else {
+          field.itemType = 'text';
+        }
+      } else {
+        field.itemType = 'text';
+      }
       break;
     default:
       field.type = 'text';
@@ -423,7 +473,8 @@ function extractAuthConfig(spec, operation) {
     case 'apiKey':
       authConfig = {
         type: 'apikey',
-        headerName: scheme.name || 'X-API-Key',
+        keyName: scheme.name || 'X-API-Key',
+        keyLocation: scheme.in || 'header', // 'header', 'query', 'cookie'
       };
       break;
     default:

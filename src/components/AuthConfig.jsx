@@ -12,7 +12,8 @@ export default function AuthConfig({ apiId }) {
   const [authType, setAuthType] = useState('none');
   const [bearerToken, setBearerToken] = useState('');
   const [apiKey, setApiKey] = useState('');
-  const [headerName, setHeaderName] = useState('X-API-Key');
+  const [keyName, setKeyName] = useState('X-API-Key');
+  const [keyLocation, setKeyLocation] = useState('header');
 
   // Auth-Config aus LocalStorage laden
   useEffect(() => {
@@ -22,13 +23,15 @@ export default function AuthConfig({ apiId }) {
         setAuthType(config.type);
         setBearerToken(config.token || '');
         setApiKey(config.apiKey || '');
-        setHeaderName(config.headerName || 'X-API-Key');
+        setKeyName(config.keyName || config.headerName || 'X-API-Key');
+        setKeyLocation(config.keyLocation || 'header');
       } else {
         // Reset bei API-Wechsel
         setAuthType('none');
         setBearerToken('');
         setApiKey('');
-        setHeaderName('X-API-Key');
+        setKeyName('X-API-Key');
+        setKeyLocation('header');
       }
     }
   }, [apiId]);
@@ -42,7 +45,8 @@ export default function AuthConfig({ apiId }) {
       config.token = bearerToken;
     } else if (authType === 'apikey') {
       config.apiKey = apiKey;
-      config.headerName = headerName;
+      config.keyName = keyName;
+      config.keyLocation = keyLocation;
     }
 
     setAuthConfig(apiId, config);
@@ -55,7 +59,8 @@ export default function AuthConfig({ apiId }) {
     setAuthType('none');
     setBearerToken('');
     setApiKey('');
-    setHeaderName('X-API-Key');
+    setKeyName('X-API-Key');
+    setKeyLocation('header');
     alert('Auth-Konfiguration gelöscht!');
   };
 
@@ -110,12 +115,24 @@ export default function AuthConfig({ apiId }) {
             placeholder="API Key eingeben..."
           />
           <FormField
-            label="Header-Name:"
+            label="Key-Name:"
             type="text"
-            name="header-name"
-            value={headerName}
-            onChange={(e) => setHeaderName(e.target.value)}
-            placeholder="z.B. X-API-Key"
+            name="key-name"
+            value={keyName}
+            onChange={(e) => setKeyName(e.target.value)}
+            placeholder="z.B. api_key, X-API-Key"
+          />
+          <FormField
+            label="Senden als:"
+            type="select"
+            name="key-location"
+            value={keyLocation}
+            onChange={(e) => setKeyLocation(e.target.value)}
+            options={[
+              { value: 'header', label: 'Header' },
+              { value: 'query', label: 'Query Parameter' },
+              { value: 'cookie', label: 'Cookie' }
+            ]}
           >
             <small className="warning">
               ⚠️ Nur für Testzwecke! Key wird in LocalStorage gespeichert.

@@ -29,6 +29,7 @@ export default function FormField({
   name,
   value,
   onChange,
+  onArrayChange,
   required = false,
   error = null,
   placeholder = '',
@@ -43,11 +44,117 @@ export default function FormField({
   pattern,
   children,
   className = '',
-  paramType = 'body' // 'body', 'query', 'path', 'header'
+  paramType = 'body', // 'body', 'query', 'path', 'header'
+  itemType = 'text',  // Für array: 'text', 'number', 'select', 'object'
+  itemOptions = [],   // Für array + select items
+  itemFields = [],    // Für array + object items
 }) {
   const inputId = name || `field-${Math.random().toString(36).substring(2, 11)}`;
 
+  // Array-Rendering
+  const renderArrayInput = () => {
+    const items = Array.isArray(value) ? value : [];
+
+    const addItem = () => {
+      if (itemType === 'object' && itemFields.length > 0) {
+        // Neues leeres Objekt mit allen Feldern
+        const newObj = {};
+        itemFields.forEach(f => { newObj[f.name] = ''; });
+        onArrayChange([...items, newObj]);
+      } else {
+        onArrayChange([...items, '']);
+      }
+    };
+
+    const removeItem = (index) => {
+      onArrayChange(items.filter((_, i) => i !== index));
+    };
+
+    const updateItem = (index, newValue) => {
+      const updated = [...items];
+      updated[index] = newValue;
+      onArrayChange(updated);
+    };
+
+    const updateObjectField = (itemIndex, fieldName, fieldValue) => {
+      const updated = [...items];
+      updated[itemIndex] = { ...updated[itemIndex], [fieldName]: fieldValue };
+      onArrayChange(updated);
+    };
+
+    return (
+      <div className="array-field-container">
+        {items.map((item, index) => (
+          itemType === 'object' && itemFields.length > 0 ? (
+            // Object-Array Item
+            <div key={index} className="array-object-item">
+              <div className="array-object-header">
+                <span className="array-item-label">Item {index + 1}</span>
+                <button type="button" className="array-remove-btn" onClick={() => removeItem(index)} title="Entfernen">✕</button>
+              </div>
+              <div className="array-object-fields">
+                {itemFields.map(subField => (
+                  <div key={subField.name} className="array-sub-field">
+                    <label>{subField.label}</label>
+                    {subField.type === 'select' && subField.options ? (
+                      <select
+                        value={(item && item[subField.name]) || ''}
+                        onChange={(e) => updateObjectField(index, subField.name, e.target.value)}
+                      >
+                        <option value="">-- Auswählen --</option>
+                        {subField.options.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type={subField.type === 'number' ? 'number' : 'text'}
+                        value={(item && item[subField.name]) || ''}
+                        onChange={(e) => updateObjectField(index, subField.name, e.target.value)}
+                        placeholder={subField.placeholder || subField.label}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            // Einfaches Array Item (string, number, select)
+            <div key={index} className="array-item">
+              {itemType === 'select' && itemOptions.length > 0 ? (
+                <select
+                  value={item || ''}
+                  onChange={(e) => updateItem(index, e.target.value)}
+                >
+                  <option value="">-- Auswählen --</option>
+                  {itemOptions.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={itemType === 'number' ? 'number' : 'text'}
+                  value={item || ''}
+                  onChange={(e) => updateItem(index, e.target.value)}
+                  placeholder={`Item ${index + 1}`}
+                />
+              )}
+              <button type="button" className="array-remove-btn" onClick={() => removeItem(index)} title="Entfernen">✕</button>
+            </div>
+          )
+        ))}
+        <button type="button" className="array-add-btn" onClick={addItem}>
+          + Hinzufügen
+        </button>
+      </div>
+    );
+  };
+
   const renderInput = () => {
+    if (type === 'array') {
+      return renderArrayInput();
+    }
+
     if (type === 'select') {
       return (
         <select
