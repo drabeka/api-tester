@@ -81,6 +81,11 @@ function convertOperationToConfig(path, method, operation, spec, baseUrl, source
   // Auth-Type extrahieren
   const auth = extractAuthConfig(spec, operation);
 
+  // Tag aus Operation extrahieren (erstes Tag verwenden)
+  const tag = (operation.tags && operation.tags.length > 0)
+    ? operation.tags[0]
+    : 'Sonstige';
+
   return {
     id: apiId,
     name: apiName,
@@ -89,6 +94,7 @@ function convertOperationToConfig(path, method, operation, spec, baseUrl, source
     method: method.toUpperCase(),
     auth: auth,
     fields: fields,
+    tag: tag,
   };
 }
 
@@ -490,28 +496,20 @@ function extractAuthConfig(spec, operation) {
  * @param {string} sourceOrigin - Origin der Import-URL (z.B. "https://petstore3.swagger.io")
  */
 function getBaseUrlFromSpec(spec, sourceOrigin = null) {
-  console.log('🔍 DEBUG: spec.servers =', spec.servers);
-  console.log('🔍 DEBUG: sourceOrigin =', sourceOrigin);
-
   if (spec.servers && spec.servers.length > 0) {
     const serverUrl = spec.servers[0].url;
-    console.log('🔍 DEBUG: serverUrl =', serverUrl);
 
     // Wenn URL relativ ist (startet mit /), mit sourceOrigin kombinieren
     if (serverUrl && serverUrl.startsWith('/')) {
       if (sourceOrigin) {
-        const finalUrl = sourceOrigin + serverUrl;
-        console.log('✅ Resolved relative server URL:', finalUrl);
-        return finalUrl;
+        return sourceOrigin + serverUrl;
       } else {
         console.warn('⚠️ OpenAPI server URL ist relativ, aber keine sourceOrigin verfügbar:', serverUrl);
         return ''; // Können relative URL nicht auflösen
       }
     }
 
-    const finalUrl = serverUrl || '';
-    console.log('✅ Extracted server URL:', finalUrl);
-    return finalUrl;
+    return serverUrl || '';
   }
 
   console.warn('⚠️ Keine Server-Definition in OpenAPI Spec gefunden');

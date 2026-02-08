@@ -137,13 +137,11 @@ function App() {
         </div>
       </header>
 
-      <div className="api-selector-container">
-        <ApiSelector
-          apis={apis}
-          selectedApiId={selectedApi?.id}
-          onSelect={handleApiSelect}
-        />
-      </div>
+      <ApiSelector
+        apis={apis}
+        selectedApiId={selectedApi?.id}
+        onSelect={handleApiSelect}
+      />
 
       <div className="main-content">
         <div className="sidebar">

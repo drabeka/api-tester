@@ -1,46 +1,116 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 
 /**
- * Dropdown zur Auswahl der API
+ * API-Auswahl mit Tag-Gruppierung
  * @param {Object} props
  * @param {Array} props.apis - Liste der verfügbaren APIs
  * @param {string} props.selectedApiId - Aktuell ausgewählte API-ID
  * @param {Function} props.onSelect - Callback bei API-Auswahl
  */
 export default function ApiSelector({ apis, selectedApiId, onSelect }) {
-  const handleChange = (e) => {
-    const apiId = e.target.value;
-    const selectedApi = apis.find(api => api.id === apiId);
-    onSelect(selectedApi);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [collapsedTags, setCollapsedTags] = useState({});
+
+  // HTTP-Methoden Farben
+  const methodColors = {
+    GET: '#27ae60',
+    POST: '#2980b9',
+    PUT: '#e67e22',
+    PATCH: '#f39c12',
+    DELETE: '#e74c3c',
+  };
+
+  // APIs filtern und nach Tags gruppieren
+  const groupedApis = useMemo(() => {
+    const filtered = apis.filter(api => {
+      if (!searchTerm) return true;
+      const term = searchTerm.toLowerCase();
+      return (
+        api.name.toLowerCase().includes(term) ||
+        api.endpoint?.toLowerCase().includes(term) ||
+        api.method?.toLowerCase().includes(term) ||
+        api.tag?.toLowerCase().includes(term)
+      );
+    });
+
+    const groups = {};
+    filtered.forEach(api => {
+      const tag = api.tag || 'Sonstige';
+      if (!groups[tag]) {
+        groups[tag] = [];
+      }
+      groups[tag].push(api);
+    });
+
+    return groups;
+  }, [apis, searchTerm]);
+
+  const tagNames = Object.keys(groupedApis).sort();
+  const totalFiltered = Object.values(groupedApis).reduce((sum, arr) => sum + arr.length, 0);
+
+  const toggleTag = (tag) => {
+    setCollapsedTags(prev => ({
+      ...prev,
+      [tag]: !prev[tag],
+    }));
   };
 
   return (
     <div className="api-selector">
-      <label htmlFor="api-select">
-        API auswählen:
-      </label>
-      <select
-        id="api-select"
-        value={selectedApiId || ''}
-        onChange={handleChange}
-        className="api-select-dropdown"
-      >
-        <option value="">-- Bitte API wählen --</option>
-        {apis.map(api => (
-          <option key={api.id} value={api.id}>
-            {api.name} ({api.method})
-          </option>
+      <div className="api-search">
+        <input
+          type="text"
+          placeholder="APIs suchen..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="api-search-input"
+        />
+        {searchTerm && (
+          <span className="api-search-count">{totalFiltered} Treffer</span>
+        )}
+      </div>
+
+      <div className="api-grouped-list">
+        {tagNames.map(tag => (
+          <div key={tag} className="api-tag-group">
+            <div
+              className="api-tag-header"
+              onClick={() => toggleTag(tag)}
+            >
+              <span className="api-tag-toggle">{collapsedTags[tag] ? '▸' : '▾'}</span>
+              <span className="api-tag-name">{tag}</span>
+              <span className="api-tag-count">{groupedApis[tag].length}</span>
+            </div>
+
+            {!collapsedTags[tag] && (
+              <div className="api-tag-items">
+                {groupedApis[tag].map(api => (
+                  <div
+                    key={api.id}
+                    className={`api-item ${selectedApiId === api.id ? 'api-item-active' : ''}`}
+                    onClick={() => onSelect(api)}
+                    title={api.description || api.endpoint}
+                  >
+                    <span
+                      className="api-method-badge"
+                      style={{ backgroundColor: methodColors[api.method] || '#95a5a6' }}
+                    >
+                      {api.method}
+                    </span>
+                    <span className="api-item-name">{api.name}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
-      </select>
-      {selectedApiId && (
-        <div className="api-info">
-          {apis.find(api => api.id === selectedApiId)?.description && (
-            <p className="api-description">
-              {apis.find(api => api.id === selectedApiId).description}
-            </p>
-          )}
-        </div>
-      )}
+
+        {tagNames.length === 0 && (
+          <div className="api-empty">
+            {searchTerm ? 'Keine APIs gefunden' : 'Keine APIs geladen'}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
