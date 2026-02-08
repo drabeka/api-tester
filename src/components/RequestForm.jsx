@@ -92,6 +92,7 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
         endpoint: api.endpoint,
         method: api.method,
         payload: visiblePayload,  // Nur sichtbare Felder
+        fields: visibleFields,    // Field-Definitionen für Parameter-Verarbeitung
         authConfig,
         apiId: api.id,
         apiName: api.name,
@@ -201,6 +202,7 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
         minLength={field.minLength}
         maxLength={field.maxLength}
         pattern={field.pattern}
+        paramType={field.paramType || 'body'}
       />
     );
   };

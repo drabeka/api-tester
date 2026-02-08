@@ -42,7 +42,8 @@ export default function FormField({
   maxLength,
   pattern,
   children,
-  className = ''
+  className = '',
+  paramType = 'body' // 'body', 'query', 'path', 'header'
 }) {
   const inputId = name || `field-${Math.random().toString(36).substring(2, 11)}`;
 
@@ -112,11 +113,42 @@ export default function FormField({
     return <input {...inputProps} />;
   };
 
+  // Parameter-Type Badge
+  const getParamTypeBadge = () => {
+    const badges = {
+      'query': { label: 'Query', color: '#3498db' },
+      'path': { label: 'Path', color: '#e67e22' },
+      'header': { label: 'Header', color: '#9b59b6' },
+      'body': { label: 'Body', color: '#95a5a6' }
+    };
+
+    const badge = badges[paramType] || badges['body'];
+
+    return (
+      <span
+        className="param-type-badge"
+        style={{
+          backgroundColor: badge.color,
+          color: 'white',
+          fontSize: '10px',
+          padding: '2px 6px',
+          borderRadius: '3px',
+          marginLeft: '8px',
+          fontWeight: 'bold',
+          textTransform: 'uppercase'
+        }}
+      >
+        {badge.label}
+      </span>
+    );
+  };
+
   return (
     <div className={`form-group ${className}`.trim()}>
       <label htmlFor={inputId}>
         {label}
         {required && <span className="required">*</span>}
+        {getParamTypeBadge()}
       </label>
 
       {renderInput()}

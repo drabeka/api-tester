@@ -5,6 +5,61 @@ import { addToHistory } from './storage.js';
 const DEFAULT_TIMEOUT = 30000; // 30 Sekunden
 
 /**
+ * Verarbeitet Parameter nach Typ (path, query, header, body)
+ * @param {string} endpoint - Basis-Endpoint mit Platzhaltern
+ * @param {Object} payload - Alle Feld-Werte
+ * @param {Array} fields - Field-Definitionen mit paramType
+ * @returns {Object} { finalEndpoint, bodyPayload, customHeaders }
+ */
+function processParameters(endpoint, payload, fields) {
+  let finalEndpoint = endpoint;
+  const bodyPayload = {};
+  const customHeaders = {};
+  const queryParams = [];
+
+  fields.forEach(field => {
+    const value = payload[field.name];
+    const paramType = field.paramType || 'body';
+
+    // Skip undefined/null values
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    switch (paramType) {
+      case 'path':
+        // Ersetze {paramName} im Endpoint
+        finalEndpoint = finalEndpoint.replace(`{${field.name}}`, encodeURIComponent(value));
+        break;
+
+      case 'query':
+        // Füge zu Query-String hinzu
+        queryParams.push(`${encodeURIComponent(field.name)}=${encodeURIComponent(value)}`);
+        break;
+
+      case 'header':
+        // Füge zu Custom-Headers hinzu
+        customHeaders[field.name] = value;
+        break;
+
+      case 'body':
+      default:
+        // Füge zu Body-Payload hinzu
+        bodyPayload[field.name] = value;
+        break;
+    }
+  });
+
+  // Query-String an Endpoint anhängen
+  if (queryParams.length > 0) {
+    const separator = finalEndpoint.includes('?') ? '&' : '?';
+    finalEndpoint += separator + queryParams.join('&');
+  }
+
+  return { finalEndpoint, bodyPayload, customHeaders };
+}
+
+/**
  * Führt einen API-Request mit Auth-Unterstützung durch
  * @param {Object} options - Request-Optionen
  * @param {string} options.endpoint - API-Endpoint URL
@@ -20,6 +75,7 @@ export async function makeApiRequest(options) {
     endpoint,
     method = 'POST',
     payload = {},
+    fields = [],
     authConfig = null,
     apiId,
     apiName,
@@ -29,17 +85,20 @@ export async function makeApiRequest(options) {
     accept = '*/*', // Default Accept Header
   } = options;
 
+  // Parameter nach Typ verarbeiten
+  const { finalEndpoint, bodyPayload, customHeaders } = processParameters(endpoint, payload, fields);
+
   // Headers vorbereiten
-  const headers = {};
+  const headers = { ...customHeaders };
 
   // Accept Header immer setzen (aus Config oder Default)
   if (accept) {
     headers['Accept'] = accept;
   }
 
-  // Prüfen ob payload Inhalt hat (nicht leer)
-  const hasPayload = payload &&
-    (typeof payload === 'string' ? payload.length > 0 : Object.keys(payload).length > 0);
+  // Prüfen ob bodyPayload Inhalt hat (nicht leer)
+  const hasPayload = bodyPayload &&
+    (typeof bodyPayload === 'string' ? bodyPayload.length > 0 : Object.keys(bodyPayload).length > 0);
 
   // Content-Type nur bei POST/PUT/PATCH mit nicht-leerem Body setzen
   if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase()) && hasPayload) {
@@ -77,16 +136,16 @@ export async function makeApiRequest(options) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url: endpoint,
+          url: finalEndpoint,
           method: method,
           headers: headers,
-          body: ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase()) ? payload : undefined
+          body: ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase()) ? bodyPayload : undefined
         }),
         signal: controller.signal
       };
     } else {
       // Direkter Request (kann CORS-Fehler verursachen)
-      fetchUrl = endpoint;
+      fetchUrl = finalEndpoint;
       requestConfig = {
         method,
         headers,
@@ -95,7 +154,7 @@ export async function makeApiRequest(options) {
 
       // Body nur bei POST/PUT/PATCH hinzufügen
       if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
-        requestConfig.body = JSON.stringify(payload);
+        requestConfig.body = JSON.stringify(bodyPayload);
       }
     }
 
@@ -126,9 +185,9 @@ export async function makeApiRequest(options) {
   const historyEntry = {
     apiId,
     apiName,
-    endpoint,
+    endpoint: finalEndpoint,
     method,
-    payload,
+    payload: bodyPayload,
     status: response ? response.status : 0,
     statusText: response ? response.statusText : 'Network Error',
     responseData,

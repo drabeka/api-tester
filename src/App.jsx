@@ -8,6 +8,7 @@ import AuthConfig from './components/AuthConfig.jsx';
 import History from './components/History.jsx';
 import Tabs from './components/Tabs.jsx';
 import EmptyState from './components/EmptyState.jsx';
+import OpenAPIImportDialog from './components/OpenAPIImportDialog.jsx';
 
 function App() {
   const [apis, setApis] = useState([]);
@@ -17,6 +18,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('request'); // 'request' | 'auth' | 'history'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showImportDialog, setShowImportDialog] = useState(false);
 
   // API-Konfiguration laden
   useEffect(() => {
@@ -69,6 +71,20 @@ function App() {
     }
   };
 
+  const handleImportApis = (importedApis) => {
+    // Merge imported APIs with existing ones
+    const mergedApis = [...apis, ...importedApis];
+    setApis(mergedApis);
+
+    // Select first imported API
+    if (importedApis.length > 0) {
+      setSelectedApi(importedApis[0]);
+      setActiveTab('request');
+    }
+
+    setShowImportDialog(false);
+  };
+
   if (loading) {
     return (
       <div className="app-container">
@@ -106,8 +122,19 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>🚀 API Test Framework</h1>
-        <p className="subtitle">Flexibles Testing für REST APIs</p>
+        <div className="header-content">
+          <div>
+            <h1>🚀 API Test Framework</h1>
+            <p className="subtitle">Flexibles Testing für REST APIs</p>
+          </div>
+          <button
+            onClick={() => setShowImportDialog(true)}
+            className="btn-import"
+            title="Import API from OpenAPI 3.0 Specification"
+          >
+            📥 Import OpenAPI
+          </button>
+        </div>
       </header>
 
       <div className="api-selector-container">
@@ -157,6 +184,13 @@ function App() {
       <footer className="app-footer">
         <p>API Test Framework v1.0 | React + esbuild</p>
       </footer>
+
+      {showImportDialog && (
+        <OpenAPIImportDialog
+          onImport={handleImportApis}
+          onClose={() => setShowImportDialog(false)}
+        />
+      )}
     </div>
   );
 }

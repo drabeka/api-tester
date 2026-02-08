@@ -6,10 +6,16 @@
     "build": "node build.js",
     "dev": "node build.js --watch"
   },
-  "keywords": ["api", "testing", "rest", "react"],
+  "keywords": [
+    "api",
+    "testing",
+    "rest",
+    "react"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "esbuild": "^0.19.0"
+    "esbuild": "^0.19.0",
+    "js-yaml": "^4.1.1"
   }
 }
