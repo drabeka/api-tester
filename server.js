@@ -241,7 +241,7 @@ const server = http.createServer((req, res) => {
 // Server starten
 server.listen(PORT, HOST, () => {
   console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║          🚀 API Test Framework Server                     ║');
+  console.log('║          🚀 API Test Framework Server                      ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
   console.log(`  Server läuft auf:`);
   console.log(`  • http://localhost:${PORT}`);

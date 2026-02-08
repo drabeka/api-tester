@@ -27,3 +27,8 @@ Thumbs.db
 # Temporäre Dateien
 *.tmp
 *.temp
+
+# Sonstiges
+.env    
+ideas/
+

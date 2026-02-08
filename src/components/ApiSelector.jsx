@@ -1,15 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 
 /**
- * API-Auswahl mit Tag-Gruppierung
+ * API-Auswahl als Combobox mit Tag-Gruppierung
  * @param {Object} props
  * @param {Array} props.apis - Liste der verfügbaren APIs
  * @param {string} props.selectedApiId - Aktuell ausgewählte API-ID
  * @param {Function} props.onSelect - Callback bei API-Auswahl
  */
 export default function ApiSelector({ apis, selectedApiId, onSelect }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [collapsedTags, setCollapsedTags] = useState({});
+  const containerRef = useRef(null);
+  const inputRef = useRef(null);
 
   // HTTP-Methoden Farben
   const methodColors = {
@@ -19,6 +22,23 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
     PATCH: '#f39c12',
     DELETE: '#e74c3c',
   };
+
+  // Ausgewählte API finden
+  const selectedApi = useMemo(() => {
+    return apis.find(api => api.id === selectedApiId) || null;
+  }, [apis, selectedApiId]);
+
+  // Klick außerhalb schließt Dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+        setSearchTerm('');
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // APIs filtern und nach Tags gruppieren
   const groupedApis = useMemo(() => {
@@ -55,62 +75,111 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
     }));
   };
 
+  const handleSelect = (api) => {
+    onSelect(api);
+    setIsOpen(false);
+    setSearchTerm('');
+  };
+
+  const handleInputClick = () => {
+    setIsOpen(true);
+    setSearchTerm('');
+    // Focus auf Input nach dem Öffnen
+    setTimeout(() => inputRef.current?.focus(), 0);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setIsOpen(false);
+      setSearchTerm('');
+    }
+  };
+
   return (
-    <div className="api-selector">
-      <div className="api-search">
-        <input
-          type="text"
-          placeholder="APIs suchen..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="api-search-input"
-        />
-        {searchTerm && (
-          <span className="api-search-count">{totalFiltered} Treffer</span>
-        )}
-      </div>
-
-      <div className="api-grouped-list">
-        {tagNames.map(tag => (
-          <div key={tag} className="api-tag-group">
-            <div
-              className="api-tag-header"
-              onClick={() => toggleTag(tag)}
-            >
-              <span className="api-tag-toggle">{collapsedTags[tag] ? '▸' : '▾'}</span>
-              <span className="api-tag-name">{tag}</span>
-              <span className="api-tag-count">{groupedApis[tag].length}</span>
+    <div className="api-selector" ref={containerRef}>
+      {/* Combobox Trigger */}
+      {!isOpen ? (
+        <div className="api-combobox-trigger" onClick={handleInputClick}>
+          {selectedApi ? (
+            <div className="api-combobox-selected">
+              <span
+                className="api-method-badge"
+                style={{ backgroundColor: methodColors[selectedApi.method] || '#95a5a6' }}
+              >
+                {selectedApi.method}
+              </span>
+              <span className="api-combobox-name">{selectedApi.name}</span>
+              {selectedApi.tag && (
+                <span className="api-combobox-tag">{selectedApi.tag}</span>
+              )}
             </div>
+          ) : (
+            <span className="api-combobox-placeholder">API auswählen...</span>
+          )}
+          <span className="api-combobox-arrow"></span>
+        </div>
+      ) : (
+        <div className="api-search">
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="APIs suchen..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="api-search-input"
+            autoFocus
+          />
+          {searchTerm && (
+            <span className="api-search-count">{totalFiltered} Treffer</span>
+          )}
+        </div>
+      )}
 
-            {!collapsedTags[tag] && (
-              <div className="api-tag-items">
-                {groupedApis[tag].map(api => (
-                  <div
-                    key={api.id}
-                    className={`api-item ${selectedApiId === api.id ? 'api-item-active' : ''}`}
-                    onClick={() => onSelect(api)}
-                    title={api.description || api.endpoint}
-                  >
-                    <span
-                      className="api-method-badge"
-                      style={{ backgroundColor: methodColors[api.method] || '#95a5a6' }}
-                    >
-                      {api.method}
-                    </span>
-                    <span className="api-item-name">{api.name}</span>
-                  </div>
-                ))}
+      {/* Dropdown Liste */}
+      {isOpen && (
+        <div className="api-dropdown-list">
+          {tagNames.map(tag => (
+            <div key={tag} className="api-tag-group">
+              <div
+                className="api-tag-header"
+                onClick={() => toggleTag(tag)}
+              >
+                <span className="api-tag-toggle">{collapsedTags[tag] ? '▸' : '▾'}</span>
+                <span className="api-tag-name">{tag}</span>
+                <span className="api-tag-count">{groupedApis[tag].length}</span>
               </div>
-            )}
-          </div>
-        ))}
 
-        {tagNames.length === 0 && (
-          <div className="api-empty">
-            {searchTerm ? 'Keine APIs gefunden' : 'Keine APIs geladen'}
-          </div>
-        )}
-      </div>
+              {!collapsedTags[tag] && (
+                <div className="api-tag-items">
+                  {groupedApis[tag].map(api => (
+                    <div
+                      key={api.id}
+                      className={`api-item ${selectedApiId === api.id ? 'api-item-active' : ''}`}
+                      onClick={() => handleSelect(api)}
+                      title={api.description || api.endpoint}
+                    >
+                      <span
+                        className="api-method-badge"
+                        style={{ backgroundColor: methodColors[api.method] || '#95a5a6' }}
+                      >
+                        {api.method}
+                      </span>
+                      <span className="api-item-name">{api.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {tagNames.length === 0 && (
+            <div className="api-empty">
+              {searchTerm ? 'Keine APIs gefunden' : 'Keine APIs geladen'}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

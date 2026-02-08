@@ -85,6 +85,7 @@ gh release create v1.0.0 \
 ## Release-Dateien
 
 Das Release-Archiv befindet sich hier:
+
 - **Lokaler Pfad**: `c:\Data\react-projects\api-tester\release\api-tester-v1.0.0.tar.gz`
 - **Größe**: ~24 KB (komprimiert)
 
