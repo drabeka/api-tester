@@ -178,6 +178,7 @@
             "description": "Demo-API zum Testen aller Validierungsfeatures (v1.0.8)",
             "endpoint": "https://jsonplaceholder.typicode.com/posts",
             "method": "POST",
+            "corsProxy": false,
             "auth": {
                 "type": "none"
             },
@@ -277,6 +278,7 @@
             "description": "Demo für Sections & Conditional Fields (v1.0.8)",
             "endpoint": "https://jsonplaceholder.typicode.com/posts",
             "method": "POST",
+            "corsProxy": false,
             "auth": {
                 "type": "none"
             },

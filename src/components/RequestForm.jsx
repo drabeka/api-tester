@@ -97,6 +97,7 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
         apiName: api.name,
         contentType: api.contentType, // Custom Content-Type aus Config
         accept: api.accept,           // Custom Accept Header aus Config
+        useProxy: api.corsProxy !== false, // Default true, false wenn explizit deaktiviert
       });
 
       // Response an Parent weitergeben
