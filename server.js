@@ -185,6 +185,27 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // API-Konfiguration speichern
+  if (req.url === '/api/save-config' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk.toString(); });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        const configPath = path.join(__dirname, 'config', 'apis.json');
+        fs.writeFileSync(configPath, JSON.stringify(data, null, 4), 'utf8');
+        res.writeHead(200, { 'Content-Type': 'application/json', ...corsHeaders });
+        res.end(JSON.stringify({ success: true }));
+        console.log(`[${new Date().toISOString()}] CONFIG SAVED - ${data.apis?.length || 0} APIs`);
+      } catch (err) {
+        console.error(`[${new Date().toISOString()}] CONFIG SAVE ERROR:`, err.message);
+        res.writeHead(400, { 'Content-Type': 'application/json', ...corsHeaders });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+    return;
+  }
+
   // URL normalisieren
   let filePath = req.url === '/' ? '/index.html' : req.url;
 

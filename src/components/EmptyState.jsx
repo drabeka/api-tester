@@ -11,7 +11,7 @@ import React from 'react';
 export default function EmptyState({ icon, message, children, className = '' }) {
   return (
     <div className={`no-history ${className}`.trim()}>
-      {icon && <div style={{ fontSize: '2em', marginBottom: '10px' }}>{icon}</div>}
+      {icon && <div className="empty-state-icon">{icon}</div>}
       <p>{message}</p>
       {children}
     </div>

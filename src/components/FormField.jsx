@@ -1,4 +1,5 @@
 import React from 'react';
+import DomainField from './DomainField.jsx';
 
 /**
  * Wiederverwendbare FormField-Komponente
@@ -48,6 +49,8 @@ export default function FormField({
   itemType = 'text',  // Für array: 'text', 'number', 'select', 'object'
   itemOptions = [],   // Für array + select items
   itemFields = [],    // Für array + object items
+  domain,             // Für domain: aufgelöstes Domain-Objekt
+  domainName,         // Für domain: Domain-Schlüssel
 }) {
   const inputId = name || `field-${Math.random().toString(36).substring(2, 11)}`;
 
@@ -94,7 +97,7 @@ export default function FormField({
               </div>
               <div className="array-object-fields">
                 {itemFields.map(subField => (
-                  <div key={subField.name} className="array-sub-field">
+                  <div key={subField.name} className="array-object-field">
                     <label>{subField.label}</label>
                     {subField.type === 'select' && subField.options ? (
                       <select
@@ -155,20 +158,40 @@ export default function FormField({
       return renderArrayInput();
     }
 
-    if (type === 'select') {
+    if (type === 'domain') {
       return (
-        <select
+        <DomainField
           id={inputId}
+          domain={domain}
+          domainName={domainName}
           value={value || ''}
-          onChange={onChange}
+          onChange={(e) => onChange(e)}
           required={required}
-        >
-          {options.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          placeholder={placeholder || '-- Auswählen --'}
+        />
+      );
+    }
+
+    if (type === 'select') {
+      // Options ins Domain-Format konvertieren: {value,label} → {code,name,status}
+      const selectDomain = {
+        name: label,
+        values: options.map(opt => ({
+          code: opt.value,
+          name: opt.label,
+          status: 'V'
+        }))
+      };
+      return (
+        <DomainField
+          id={inputId}
+          domain={selectDomain}
+          domainName={name}
+          value={value || ''}
+          onChange={(e) => onChange(e)}
+          required={required}
+          placeholder={placeholder || '-- Auswählen --'}
+        />
       );
     }
 
@@ -234,16 +257,7 @@ export default function FormField({
     return (
       <span
         className="param-type-badge"
-        style={{
-          backgroundColor: badge.color,
-          color: 'white',
-          fontSize: '10px',
-          padding: '2px 6px',
-          borderRadius: '3px',
-          marginLeft: '8px',
-          fontWeight: 'bold',
-          textTransform: 'uppercase'
-        }}
+        style={{ backgroundColor: badge.color }}
       >
         {badge.label}
       </span>

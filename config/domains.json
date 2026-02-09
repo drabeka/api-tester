@@ -1,0 +1,50 @@
+[
+    {
+        "code": "laender",
+        "name": "Länder",
+        "values": [
+            {
+                "code": "AT",
+                "name": "Österreich",
+                "status": "N",
+                "values": [
+                    { "code": "W", "name": "Wien", "status": "V" },
+                    { "code": "NÖ", "name": "Niederösterreich", "status": "V" },
+                    { "code": "OÖ", "name": "Oberösterreich", "status": "V" },
+                    { "code": "S", "name": "Salzburg", "status": "V" },
+                    { "code": "T", "name": "Tirol", "status": "V" },
+                    { "code": "V", "name": "Vorarlberg", "status": "V" },
+                    { "code": "K", "name": "Kärnten", "status": "V" },
+                    { "code": "ST", "name": "Steiermark", "status": "V" },
+                    { "code": "B", "name": "Burgenland", "status": "V" }
+                ]
+            },
+            {
+                "code": "DE",
+                "name": "Deutschland",
+                "status": "N",
+                "values": [
+                    { "code": "BY", "name": "Bayern", "status": "V" },
+                    { "code": "NW", "name": "Nordrhein-Westfalen", "status": "S" },
+                    { "code": "BE", "name": "Berlin", "status": "V" },
+                    { "code": "HH", "name": "Hamburg", "status": "V" }
+                ]
+            },
+            { "code": "CH", "name": "Schweiz", "status": "V" },
+            { "code": "XX", "name": "Veraltet", "status": "S" }
+        ]
+    },
+    {
+        "code": "ausbildung",
+        "name": "Ausbildung",
+        "values": [
+            { "code": "ABHS", "name": "Allgemeinbildende Höhere Schule", "status": "V" },
+            { "code": "BBHS", "name": "Berufsbildende Höhere Schule", "status": "V" },
+            { "code": "UNI", "name": "Universität", "status": "V" },
+            { "code": "FH", "name": "Fachhochschule", "status": "V" },
+            { "code": "LEHR", "name": "Lehre", "status": "V" },
+            { "code": "SONS", "name": "Sonstige", "status": "S" },
+            { "code": "OLD", "name": "Veraltet", "status": "N" }
+        ]
+    }
+]

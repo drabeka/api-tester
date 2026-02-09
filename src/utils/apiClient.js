@@ -268,9 +268,16 @@ export function validateFields(fields, values) {
     const value = values[field.name];
 
     // Required-Validierung
-    if (field.required && (value === undefined || value === null || value === '')) {
-      errors[field.name] = field.requiredError || `${field.label} ist erforderlich`;
-      return;
+    if (field.required) {
+      if (value === undefined || value === null || value === '') {
+        errors[field.name] = field.requiredError || `${field.label} ist erforderlich`;
+        return;
+      }
+      // Leere Arrays bei required-Feldern abfangen
+      if (field.type === 'array' && Array.isArray(value) && value.length === 0) {
+        errors[field.name] = field.requiredError || `${field.label}: Mindestens ein Eintrag erforderlich`;
+        return;
+      }
     }
 
     // Weitere Validierungen nur wenn Wert vorhanden

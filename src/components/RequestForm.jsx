@@ -11,7 +11,7 @@ import EmptyState from './EmptyState.jsx';
  * @param {Function} props.onResponse - Callback mit Response-Daten
  * @param {Object} props.initialValues - Vorausgefüllte Werte (z.B. aus Historie)
  */
-export default function RequestForm({ api, onResponse, initialValues = null }) {
+export default function RequestForm({ api, onResponse, initialValues = null, domains = {} }) {
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -215,6 +215,8 @@ export default function RequestForm({ api, onResponse, initialValues = null }) {
         itemType={field.itemType}
         itemOptions={field.itemOptions}
         itemFields={field.itemFields}
+        domain={field.type === 'domain' ? domains[field.domain] : undefined}
+        domainName={field.domain}
       />
     );
   };

@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { convertOpenAPIToConfig } from '../utils/openapi-converter.js';
-import Tabs from './Tabs.jsx';
 import yaml from 'js-yaml';
 
 /**
- * Dialog zum Importieren von API-Definitionen aus OpenAPI 3.0 Spezifikationen
+ * Aufklappbares Inline-Panel zum Importieren von OpenAPI 3.0 Spezifikationen
  * @param {Object} props
  * @param {Function} props.onImport - Callback mit importierten APIs
  * @param {Function} props.onClose - Callback zum Schließen
  */
 export default function OpenAPIImportDialog({ onImport, onClose }) {
-  const [activeTab, setActiveTab] = useState('url');
+  const [importMode, setImportMode] = useState('url');
   const [url, setUrl] = useState('');
-  const [fileContent, setFileContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -36,14 +34,11 @@ export default function OpenAPIImportDialog({ onImport, onClose }) {
       const text = await response.text();
       let openApiSpec;
 
-      // Versuche zuerst JSON zu parsen
       if (contentType?.includes('application/json')) {
         openApiSpec = JSON.parse(text);
       } else if (contentType?.includes('yaml') || contentType?.includes('yml') || url.endsWith('.yaml') || url.endsWith('.yml')) {
-        // YAML parsen
         openApiSpec = yaml.load(text);
       } else {
-        // Fallback: Versuche JSON, dann YAML
         try {
           openApiSpec = JSON.parse(text);
         } catch (jsonErr) {
@@ -73,13 +68,11 @@ export default function OpenAPIImportDialog({ onImport, onClose }) {
         const content = event.target.result;
         let openApiSpec;
 
-        // Parse basierend auf Dateiendung
         if (file.name.endsWith('.json')) {
           openApiSpec = JSON.parse(content);
         } else if (file.name.endsWith('.yaml') || file.name.endsWith('.yml')) {
           openApiSpec = yaml.load(content);
         } else {
-          // Fallback: Versuche JSON, dann YAML
           try {
             openApiSpec = JSON.parse(content);
           } catch (jsonErr) {
@@ -87,7 +80,6 @@ export default function OpenAPIImportDialog({ onImport, onClose }) {
           }
         }
 
-        setFileContent(content);
         processOpenAPISpec(openApiSpec);
       } catch (err) {
         setError(`Datei-Parse fehlgeschlagen: ${err.message}`);
@@ -100,7 +92,6 @@ export default function OpenAPIImportDialog({ onImport, onClose }) {
     try {
       const options = {};
 
-      // Wenn Source-URL vorhanden, origin extrahieren für relative Server-URLs
       if (sourceUrl) {
         try {
           const urlObj = new URL(sourceUrl);
@@ -125,128 +116,107 @@ export default function OpenAPIImportDialog({ onImport, onClose }) {
   const handleConfirmImport = () => {
     if (preview && preview.length > 0) {
       onImport(preview);
-      onClose();
     }
   };
 
+  const methodColors = {
+    GET: '#27ae60',
+    POST: '#2980b9',
+    PUT: '#e67e22',
+    PATCH: '#f39c12',
+    DELETE: '#e74c3c',
+  };
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content import-dialog" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>📥 API Import (OpenAPI 3.0)</h2>
-          <button className="close-button" onClick={onClose}>✕</button>
-        </div>
-
-        <div className="modal-body">
-          <Tabs
-            tabs={[
-              { id: 'url', label: 'URL Import' },
-              { id: 'file', label: 'Datei Upload' },
-            ]}
-            activeTab={activeTab}
-            onChange={setActiveTab}
-          />
-
-          <div className="tab-content">
-            {activeTab === 'url' && (
-              <div className="import-url">
-                <label>
-                  OpenAPI Specification URL:
-                  <input
-                    type="url"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    placeholder="https://api.example.com/openapi.json"
-                    disabled={isLoading}
-                  />
-                </label>
-                <button
-                  className="btn-primary"
-                  onClick={handleUrlImport}
-                  disabled={isLoading || !url.trim()}
-                >
-                  {isLoading ? 'Lädt...' : '🔄 Importieren'}
-                </button>
-
-                <div className="help-text">
-                  <strong>Beispiel:</strong>
-                  <ul>
-                    <li>https://petstore3.swagger.io/api/v3/openapi.json</li>
-                  </ul>
-                  <small style={{ display: 'block', marginTop: '8px', color: '#27ae60' }}>
-                    ✓ JSON und YAML werden unterstützt
-                  </small>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'file' && (
-              <div className="import-file">
-                <label className="file-upload-label">
-                  <input
-                    type="file"
-                    accept=".json,.yaml,.yml"
-                    onChange={handleFileUpload}
-                    style={{ display: 'none' }}
-                  />
-                  <div className="file-upload-area">
-                    <div className="upload-icon">📁</div>
-                    <div className="upload-text">
-                      <strong>Datei auswählen</strong>
-                      <br />
-                      <small>OpenAPI JSON (.json) oder YAML (.yaml, .yml)</small>
-                    </div>
-                  </div>
-                </label>
-
-                {fileContent && (
-                  <div className="file-info">
-                    ✓ Datei geladen ({fileContent.length} Zeichen)
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {error && (
-            <div className="error-message">
-              ❌ {error}
-            </div>
-          )}
-
-          {preview && preview.length > 0 && (
-            <div className="import-preview">
-              <h3>📋 Vorschau ({preview.length} APIs)</h3>
-              <div className="preview-list">
-                {preview.map((api, index) => (
-                  <div key={index} className="preview-item">
-                    <div className="preview-header">
-                      <span className="api-method">{api.method}</span>
-                      <strong>{api.name}</strong>
-                    </div>
-                    <div className="preview-details">
-                      <small>{api.endpoint}</small>
-                      <span className="field-count">{api.fields.length} Felder</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="modal-footer">
-          <button className="btn-secondary" onClick={onClose}>
-            Abbrechen
+    <div className="import-panel">
+      <div className="import-panel-header">
+        <span className="import-panel-title">OpenAPI 3.0 Import</span>
+        <div className="import-panel-modes">
+          <button
+            className={`import-mode-btn ${importMode === 'url' ? 'active' : ''}`}
+            onClick={() => setImportMode('url')}
+          >
+            URL
           </button>
           <button
-            className="btn-primary"
-            onClick={handleConfirmImport}
-            disabled={!preview || preview.length === 0}
+            className={`import-mode-btn ${importMode === 'file' ? 'active' : ''}`}
+            onClick={() => setImportMode('file')}
           >
-            ✓ {preview ? `${preview.length} APIs importieren` : 'Importieren'}
+            Datei
           </button>
         </div>
+        <button className="import-panel-close" onClick={onClose}>✕</button>
+      </div>
+
+      <div className="import-panel-body">
+        {importMode === 'url' && (
+          <div className="import-url-row">
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://api.example.com/openapi.json"
+              disabled={isLoading}
+              className="import-url-input"
+              onKeyDown={(e) => e.key === 'Enter' && handleUrlImport()}
+            />
+            <button
+              className="btn-primary"
+              onClick={handleUrlImport}
+              disabled={isLoading || !url.trim()}
+            >
+              {isLoading ? 'Lädt...' : 'Importieren'}
+            </button>
+          </div>
+        )}
+
+        {importMode === 'file' && (
+          <div className="import-file-row">
+            <label className="import-file-btn">
+              <input
+                type="file"
+                accept=".json,.yaml,.yml"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+              />
+              Datei wählen (.json, .yaml)
+            </label>
+          </div>
+        )}
+
+        {error && (
+          <div className="import-error">
+            {error}
+          </div>
+        )}
+
+        {preview && preview.length > 0 && (
+          <div className="import-preview">
+            <div className="import-preview-header">
+              <span>{preview.length} APIs gefunden</span>
+              <button
+                className="btn-primary"
+                onClick={handleConfirmImport}
+              >
+                Alle importieren
+              </button>
+            </div>
+            <div className="import-preview-list">
+              {preview.map((api, index) => (
+                <div key={index} className="import-preview-item">
+                  <span
+                    className="api-method-badge"
+                    style={{ backgroundColor: methodColors[api.method] || '#95a5a6' }}
+                  >
+                    {api.method}
+                  </span>
+                  <span className="import-preview-name">{api.name}</span>
+                  <span className="import-preview-fields">{api.fields?.length || 0} Felder</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

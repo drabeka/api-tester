@@ -19,6 +19,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showImportDialog, setShowImportDialog] = useState(false);
+  const [domains, setDomains] = useState({});
 
   // API-Konfiguration laden
   useEffect(() => {
@@ -28,14 +29,34 @@ function App() {
   const loadApis = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/config/apis.json');
 
-      if (!response.ok) {
-        throw new Error(`Fehler beim Laden der APIs: ${response.statusText}`);
+      // Parallel laden: apis.json (required) + domains.json (optional)
+      const [apisResponse, domainsResponse] = await Promise.all([
+        fetch('/config/apis.json'),
+        fetch('/config/domains.json').catch(() => null)
+      ]);
+
+      if (!apisResponse.ok) {
+        throw new Error(`Fehler beim Laden der APIs: ${apisResponse.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await apisResponse.json();
       setApis(data.apis || []);
+
+      // Domains laden (optional, Fehler werden toleriert)
+      if (domainsResponse && domainsResponse.ok) {
+        try {
+          const domainsData = await domainsResponse.json();
+          // Array → Map (code → domain) für schnellen Lookup
+          const domainsMap = {};
+          if (Array.isArray(domainsData)) {
+            domainsData.forEach(d => { domainsMap[d.code] = d; });
+          }
+          setDomains(domainsMap);
+        } catch (e) {
+          console.warn('Domains konnten nicht geladen werden:', e);
+        }
+      }
 
       // Erste API automatisch auswählen
       if (data.apis && data.apis.length > 0) {
@@ -71,12 +92,27 @@ function App() {
     }
   };
 
+  const handleSaveApis = async () => {
+    try {
+      const res = await fetch('/api/save-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apis })
+      });
+      if (!res.ok) throw new Error('Speichern fehlgeschlagen');
+      const result = await res.json();
+      if (result.success) {
+        alert('APIs erfolgreich gespeichert!');
+      }
+    } catch (err) {
+      alert('Fehler beim Speichern: ' + err.message);
+    }
+  };
+
   const handleImportApis = (importedApis) => {
-    // Merge imported APIs with existing ones
     const mergedApis = [...apis, ...importedApis];
     setApis(mergedApis);
 
-    // Select first imported API
     if (importedApis.length > 0) {
       setSelectedApi(importedApis[0]);
       setActiveTab('request');
@@ -128,14 +164,28 @@ function App() {
             <p className="subtitle">Flexibles Testing für REST APIs</p>
           </div>
           <button
-            onClick={() => setShowImportDialog(true)}
-            className="btn-import"
+            onClick={handleSaveApis}
+            className="btn-secondary btn-sm"
+            title="APIs in config/apis.json speichern"
+          >
+            💾 APIs speichern
+          </button>
+          <button
+            onClick={() => setShowImportDialog(!showImportDialog)}
+            className={`btn-secondary btn-sm ${showImportDialog ? 'active' : ''}`}
             title="Import API from OpenAPI 3.0 Specification"
           >
             📥 Import OpenAPI
           </button>
         </div>
       </header>
+
+      {showImportDialog && (
+        <OpenAPIImportDialog
+          onImport={handleImportApis}
+          onClose={() => setShowImportDialog(false)}
+        />
+      )}
 
       <ApiSelector
         apis={apis}
@@ -161,6 +211,7 @@ function App() {
                 api={selectedApi}
                 onResponse={handleResponse}
                 initialValues={initialFormValues}
+                domains={domains}
               />
             )}
 
@@ -182,13 +233,6 @@ function App() {
       <footer className="app-footer">
         <p>API Test Framework v1.0 | React + esbuild</p>
       </footer>
-
-      {showImportDialog && (
-        <OpenAPIImportDialog
-          onImport={handleImportApis}
-          onClose={() => setShowImportDialog(false)}
-        />
-      )}
     </div>
   );
 }

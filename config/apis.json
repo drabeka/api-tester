@@ -1,5 +1,6 @@
 {
-    "apis": [{
+    "apis": [
+        {
             "id": "aps_face_new",
             "name": "APS Face New",
             "description": "APS Face New REST API für Kreditprüfung",
@@ -8,56 +9,65 @@
             "auth": {
                 "type": "none"
             },
-            "fields": [{
+            "fields": [
+                {
                     "name": "DOM_AUSBILDUNG",
                     "label": "Ausbildung (DOM_AUSBILDUNG)",
                     "type": "text",
                     "defaultValue": "ABHS",
                     "required": true
-                }, {
+                },
+                {
                     "name": "DOM_BERUFSSTAND",
                     "label": "Berufsstand (DOM_BERUFSSTAND)",
                     "type": "text",
                     "defaultValue": "UANS",
                     "required": true
-                }, {
+                },
+                {
                     "name": "DOM_BRANCHE_ARBEITGEBER",
                     "label": "Branche Arbeitgeber (DOM_BRANCHE_ARBEITGEBER)",
                     "type": "text",
                     "defaultValue": "D35",
                     "required": true
-                }, {
+                },
+                {
                     "name": "COD_POSTLEITZAHL",
                     "label": "Postleitzahl (COD_POSTLEITZAHL)",
                     "type": "text",
                     "defaultValue": "1190",
                     "required": true
-                }, {
+                },
+                {
                     "name": "DOM_WOHNART",
                     "label": "Wohnart (DOM_WOHNART)",
                     "type": "text",
                     "defaultValue": "HAUS",
                     "required": true
-                }, {
+                },
+                {
                     "name": "BET_UEBERSCHUSS_HAUSHALT_AKT",
                     "label": "Überschuss Haushalt (BET_UEBERSCHUSS_HAUSHALT_AKT)",
                     "type": "number",
                     "defaultValue": 1500.3,
                     "step": 0.01,
                     "required": true
-                }, {
+                },
+                {
                     "name": "ANZ_MONATE_SEIT_MAHNUNG_1_MIN",
                     "label": "Monate seit Mahnung 1 (ANZ_MONATE_SEIT_MAHNUNG_1_MIN)",
                     "type": "number",
                     "defaultValue": -1,
                     "required": true
-                }, {
+                },
+                {
                     "name": "ANZ_KREDITKONTEN",
                     "label": "Anzahl Kreditkonten (ANZ_KREDITKONTEN)",
                     "type": "number",
                     "defaultValue": -1,
                     "required": true
-                }, {
+                },
+                {
                     "name": "JN_MITKREDITNEHMER",
                     "label": "Mitkreditnehmer (JN_MITKREDITNEHMER)",
                     "type": "select",
@@ -66,27 +76,29 @@
                         {
                             "value": " ",
                             "label": "unbekannt"
-                        }, 
+                        },
                         {
                             "value": "N",
                             "label": "Nein"
-                        }, 
+                        },
                         {
                             "value": "J",
                             "label": "Ja"
                         }
                     ],
                     "required": true
-                }, {
+                },
+                {
                     "name": "BET_VERFUEGBARER_BETRAG",
                     "label": "Verfügbarer Betrag (BET_VERFUEGBARER_BETRAG)",
                     "type": "number",
-                    "defaultValue": 0.0,
+                    "defaultValue": 0,
                     "step": 0.01,
                     "required": true
                 }
             ]
-        }, {
+        },
+        {
             "id": "bff_rating",
             "name": "BackendForFrontend API",
             "description": "BackendForFrontend API",
@@ -97,82 +109,96 @@
             "auth": {
                 "type": "none"
             },
-            "fields": [{
+            "fields": [
+                {
                     "name": "education",
                     "label": "Ausbildung (education)",
                     "type": "text",
                     "defaultValue": "ABHS",
                     "required": true
-                }, {
+                },
+                {
                     "name": "ocupationType",
                     "label": "Berufsstand (ocupationType)",
                     "type": "text",
                     "defaultValue": "UANS",
                     "required": true
-                }, {
+                },
+                {
                     "name": "employerIndustyCode",
                     "label": "Branche Arbeitgeber (employerIndustyCode)",
                     "type": "text",
                     "defaultValue": "D35",
                     "required": true
-                }, {
+                },
+                {
                     "name": "postalCode",
                     "label": "Postleitzahl (postalCode)",
                     "type": "text",
                     "defaultValue": "1190",
                     "required": true
-                }, {
+                },
+                {
                     "name": "residenceType",
                     "label": "Wohnart (residenceType)",
                     "type": "text",
                     "defaultValue": "HAUS",
                     "required": true
-                }, {
+                },
+                {
                     "name": "remainingValue",
                     "label": "Überschuss Haushalt (remainingValue)",
                     "type": "number",
                     "defaultValue": 1500.3,
                     "step": 1000,
                     "required": true
-                }, {
+                },
+                {
                     "name": "dunning1MonthsMinCount",
                     "label": "Monate seit Mahnung 1 (dunning1MonthsMinCount)",
                     "type": "number",
                     "defaultValue": -1,
                     "required": true
-                }, {
+                },
+                {
                     "name": "loanAccountsCount",
                     "label": "Anzahl Kreditkonten (loanAccountsCount)",
                     "type": "number",
                     "defaultValue": -1,
                     "required": true
-                }, {
+                },
+                {
                     "name": "coDebtor",
                     "label": "Mitkreditnehmer (coDebtor)",
                     "type": "select",
                     "defaultValue": "N",
-                    "options": [{
+                    "options": [
+                        {
                             "value": " ",
                             "label": "unbekannt"
-                        },{
+                        },
+                        {
                             "value": "N",
                             "label": "Nein"
-                        }, {
+                        },
+                        {
                             "value": "J",
                             "label": "Ja"
                         }
                     ],
                     "required": true
-                }, {
+                },
+                {
                     "name": "availableSumAmount",
                     "label": "Verfügbarer Betrag (availableSumAmount)",
                     "type": "number",
-                    "defaultValue": 0.0,
+                    "defaultValue": 0,
                     "step": 1000,
                     "required": true
                 }
             ]
-        }, {
+        },
+        {
             "id": "validation_demo",
             "name": "Validation Demo API",
             "description": "Demo-API zum Testen aller Validierungsfeatures (v1.0.8)",
@@ -182,7 +208,8 @@
             "auth": {
                 "type": "none"
             },
-            "fields": [{
+            "fields": [
+                {
                     "name": "age",
                     "label": "Alter",
                     "type": "number",
@@ -192,7 +219,8 @@
                     "max": 99,
                     "minError": "Sie müssen mindestens 18 Jahre alt sein",
                     "maxError": "Maximalalter ist 99 Jahre"
-                }, {
+                },
+                {
                     "name": "salary",
                     "label": "Jahresgehalt (€)",
                     "type": "number",
@@ -201,7 +229,8 @@
                     "max": 1000000,
                     "step": 1000,
                     "required": false
-                }, {
+                },
+                {
                     "name": "username",
                     "label": "Benutzername",
                     "type": "text",
@@ -213,7 +242,8 @@
                     "minLengthError": "Mindestens 3 Zeichen erforderlich",
                     "helpText": "3-20 Zeichen, nur Buchstaben, Zahlen und Unterstriche",
                     "exampleValue": "max_mustermann"
-                }, {
+                },
+                {
                     "name": "email",
                     "label": "E-Mail",
                     "type": "text",
@@ -222,7 +252,8 @@
                     "patternError": "Bitte gültige E-Mail-Adresse eingeben",
                     "placeholder": "name@example.com",
                     "exampleValue": "max.mustermann@example.com"
-                }, {
+                },
+                {
                     "name": "birthdate",
                     "label": "Geburtsdatum",
                     "type": "date",
@@ -231,7 +262,8 @@
                     "max": "2010-12-31",
                     "helpText": "Sie müssen zwischen 1920 und 2010 geboren sein",
                     "exampleValue": "1990-05-15"
-                }, {
+                },
+                {
                     "name": "postalCode",
                     "label": "Postleitzahl (AT)",
                     "type": "text",
@@ -242,7 +274,8 @@
                     "maxLength": 4,
                     "placeholder": "1010",
                     "exampleValue": "1190"
-                }, {
+                },
+                {
                     "name": "bio",
                     "label": "Biografie",
                     "type": "textarea",
@@ -253,26 +286,48 @@
                     "placeholder": "Erzählen Sie etwas über sich (10-500 Zeichen)...",
                     "helpText": "Optional: Eine kurze Beschreibung über Sie",
                     "exampleValue": "Ich bin ein Softwareentwickler aus Wien mit Leidenschaft für moderne Webtechnologien."
-                }, {
+                },
+                {
                     "name": "country",
                     "label": "Land",
                     "type": "select",
                     "defaultValue": "AT",
-                    "options": [{
+                    "options": [
+                        {
                             "value": "AT",
                             "label": "Österreich"
-                        }, {
+                        },
+                        {
                             "value": "DE",
                             "label": "Deutschland"
-                        }, {
+                        },
+                        {
                             "value": "CH",
                             "label": "Schweiz"
                         }
                     ],
                     "required": true
+                },
+                {
+                    "name": "region",
+                    "label": "Region (Domain)",
+                    "type": "domain",
+                    "domain": "laender",
+                    "required": true,
+                    "helpText": "Hierarchische Auswahl mit Baum-Struktur und Status-System",
+                    "exampleValue": "W"
+                },
+                {
+                    "name": "education",
+                    "label": "Ausbildung (Domain)",
+                    "type": "domain",
+                    "domain": "ausbildung",
+                    "required": false,
+                    "helpText": "Flache Domain-Auswahl mit Status V/N/S"
                 }
             ]
-        }, {
+        },
+        {
             "id": "advanced_demo",
             "name": "Advanced Features Demo",
             "description": "Demo für Sections & Conditional Fields (v1.0.8)",
@@ -282,44 +337,53 @@
             "auth": {
                 "type": "none"
             },
-            "sections": [{
+            "sections": [
+                {
                     "title": "👤 Persönliche Daten",
                     "description": "Grundlegende Informationen über Sie",
-                    "fields": [{
+                    "fields": [
+                        {
                             "name": "firstName",
                             "label": "Vorname",
                             "type": "text",
                             "required": true,
                             "minLength": 2,
                             "exampleValue": "Max"
-                        }, {
+                        },
+                        {
                             "name": "lastName",
                             "label": "Nachname",
                             "type": "text",
                             "required": true,
                             "minLength": 2,
                             "exampleValue": "Mustermann"
-                        }, {
+                        },
+                        {
                             "name": "nationality",
                             "label": "Staatsangehörigkeit",
                             "type": "select",
                             "required": true,
                             "defaultValue": "AT",
-                            "options": [{
+                            "options": [
+                                {
                                     "value": "AT",
                                     "label": "Österreich"
-                                }, {
+                                },
+                                {
                                     "value": "DE",
                                     "label": "Deutschland"
-                                }, {
+                                },
+                                {
                                     "value": "CH",
                                     "label": "Schweiz"
-                                }, {
+                                },
+                                {
                                     "value": "OTHER",
                                     "label": "Andere"
                                 }
                             ]
-                        }, {
+                        },
+                        {
                             "name": "otherNationality",
                             "label": "Welche Staatsangehörigkeit?",
                             "type": "text",
@@ -332,27 +396,33 @@
                             "exampleValue": "Italien"
                         }
                     ]
-                }, {
+                },
+                {
                     "title": "🏠 Wohnsituation",
                     "description": "Angaben zu Ihrem Wohnsitz",
-                    "fields": [{
+                    "fields": [
+                        {
                             "name": "housingType",
                             "label": "Wohnsituation",
                             "type": "select",
                             "required": true,
                             "defaultValue": "RENT",
-                            "options": [{
+                            "options": [
+                                {
                                     "value": "RENT",
                                     "label": "Miete"
-                                }, {
+                                },
+                                {
                                     "value": "OWN",
                                     "label": "Eigentum"
-                                }, {
+                                },
+                                {
                                     "value": "PARENTS",
                                     "label": "Bei Eltern"
                                 }
                             ]
-                        }, {
+                        },
+                        {
                             "name": "monthlyRent",
                             "label": "Monatliche Miete (€)",
                             "type": "number",
@@ -366,7 +436,8 @@
                             },
                             "helpText": "Nur bei Mietwohnung erforderlich",
                             "exampleValue": 850
-                        }, {
+                        },
+                        {
                             "name": "propertyValue",
                             "label": "Immobilienwert (€)",
                             "type": "number",
@@ -382,30 +453,37 @@
                             "exampleValue": 350000
                         }
                     ]
-                }, {
+                },
+                {
                     "title": "💰 Finanzen",
                     "description": "Einkommens- und Vermögensverhältnisse",
-                    "fields": [{
+                    "fields": [
+                        {
                             "name": "employmentStatus",
                             "label": "Beschäftigungsstatus",
                             "type": "select",
                             "required": true,
                             "defaultValue": "EMPLOYED",
-                            "options": [{
+                            "options": [
+                                {
                                     "value": "EMPLOYED",
                                     "label": "Angestellt"
-                                }, {
+                                },
+                                {
                                     "value": "SELFEMPLOYED",
                                     "label": "Selbstständig"
-                                }, {
+                                },
+                                {
                                     "value": "UNEMPLOYED",
                                     "label": "Arbeitslos"
-                                }, {
+                                },
+                                {
                                     "value": "STUDENT",
                                     "label": "Student"
                                 }
                             ]
-                        }, {
+                        },
+                        {
                             "name": "monthlyIncome",
                             "label": "Monatliches Nettoeinkommen (€)",
                             "type": "number",
@@ -415,11 +493,15 @@
                             "step": 100,
                             "showIf": {
                                 "field": "employmentStatus",
-                                "value": ["EMPLOYED", "SELFEMPLOYED"]
+                                "value": [
+                                    "EMPLOYED",
+                                    "SELFEMPLOYED"
+                                ]
                             },
                             "helpText": "Nur bei Beschäftigung erforderlich",
                             "exampleValue": 3200
-                        }, {
+                        },
+                        {
                             "name": "company",
                             "label": "Arbeitgeber",
                             "type": "text",
@@ -429,7 +511,8 @@
                                 "value": "EMPLOYED"
                             },
                             "exampleValue": "Beispiel GmbH"
-                        }, {
+                        },
+                        {
                             "name": "businessName",
                             "label": "Firmenname",
                             "type": "text",
@@ -443,6 +526,773 @@
                     ]
                 }
             ]
+        },
+        {
+            "id": "updatepet",
+            "name": "Update an existing pet.",
+            "description": "Update an existing pet by Id.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/pet",
+            "method": "PUT",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "id",
+                    "label": "Id",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "exampleValue": 10,
+                    "paramType": "body"
+                },
+                {
+                    "name": "name",
+                    "label": "Name",
+                    "required": true,
+                    "type": "text",
+                    "exampleValue": "doggie",
+                    "paramType": "body"
+                },
+                {
+                    "name": "category",
+                    "label": "Category",
+                    "required": false,
+                    "type": "text",
+                    "paramType": "body"
+                },
+                {
+                    "name": "photoUrls",
+                    "label": "Photo Urls",
+                    "required": true,
+                    "type": "array",
+                    "itemType": "text",
+                    "paramType": "body"
+                },
+                {
+                    "name": "tags",
+                    "label": "Tags",
+                    "required": false,
+                    "type": "array",
+                    "itemType": "object",
+                    "itemFields": [
+                        {
+                            "name": "id",
+                            "label": "Id",
+                            "required": false,
+                            "type": "number",
+                            "step": 1
+                        },
+                        {
+                            "name": "name",
+                            "label": "Name",
+                            "required": false,
+                            "type": "text"
+                        }
+                    ],
+                    "paramType": "body"
+                },
+                {
+                    "name": "status",
+                    "label": "Status",
+                    "required": false,
+                    "type": "select",
+                    "options": [
+                        {
+                            "value": "available",
+                            "label": "available"
+                        },
+                        {
+                            "value": "pending",
+                            "label": "pending"
+                        },
+                        {
+                            "value": "sold",
+                            "label": "sold"
+                        }
+                    ],
+                    "helpText": "pet status in the store",
+                    "paramType": "body"
+                }
+            ],
+            "tag": "pet"
+        },
+        {
+            "id": "addpet",
+            "name": "Add a new pet to the store.",
+            "description": "Add a new pet to the store.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/pet",
+            "method": "POST",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "id",
+                    "label": "Id",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "exampleValue": 10,
+                    "paramType": "body"
+                },
+                {
+                    "name": "name",
+                    "label": "Name",
+                    "required": true,
+                    "type": "text",
+                    "exampleValue": "doggie",
+                    "paramType": "body"
+                },
+                {
+                    "name": "category",
+                    "label": "Category",
+                    "required": false,
+                    "type": "text",
+                    "paramType": "body"
+                },
+                {
+                    "name": "photoUrls",
+                    "label": "Photo Urls",
+                    "required": true,
+                    "type": "array",
+                    "itemType": "text",
+                    "paramType": "body"
+                },
+                {
+                    "name": "tags",
+                    "label": "Tags",
+                    "required": false,
+                    "type": "array",
+                    "itemType": "object",
+                    "itemFields": [
+                        {
+                            "name": "id",
+                            "label": "Id",
+                            "required": false,
+                            "type": "number",
+                            "step": 1
+                        },
+                        {
+                            "name": "name",
+                            "label": "Name",
+                            "required": false,
+                            "type": "text"
+                        }
+                    ],
+                    "paramType": "body"
+                },
+                {
+                    "name": "status",
+                    "label": "Status",
+                    "required": false,
+                    "type": "select",
+                    "options": [
+                        {
+                            "value": "available",
+                            "label": "available"
+                        },
+                        {
+                            "value": "pending",
+                            "label": "pending"
+                        },
+                        {
+                            "value": "sold",
+                            "label": "sold"
+                        }
+                    ],
+                    "helpText": "pet status in the store",
+                    "paramType": "body"
+                }
+            ],
+            "tag": "pet"
+        },
+        {
+            "id": "findpetsbystatus",
+            "name": "Finds Pets by status.",
+            "description": "Multiple status values can be provided with comma separated strings.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/pet/findByStatus",
+            "method": "GET",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "status",
+                    "label": "Status",
+                    "required": true,
+                    "paramType": "query",
+                    "type": "select",
+                    "options": [
+                        {
+                            "value": "available",
+                            "label": "available"
+                        },
+                        {
+                            "value": "pending",
+                            "label": "pending"
+                        },
+                        {
+                            "value": "sold",
+                            "label": "sold"
+                        }
+                    ],
+                    "defaultValue": "available",
+                    "helpText": "Status values that need to be considered for filter"
+                }
+            ],
+            "tag": "pet"
+        },
+        {
+            "id": "findpetsbytags",
+            "name": "Finds Pets by tags.",
+            "description": "Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/pet/findByTags",
+            "method": "GET",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "tags",
+                    "label": "Tags",
+                    "required": true,
+                    "paramType": "query",
+                    "type": "array",
+                    "itemType": "text",
+                    "helpText": "Tags to filter by"
+                }
+            ],
+            "tag": "pet"
+        },
+        {
+            "id": "getpetbyid",
+            "name": "Find pet by ID.",
+            "description": "Returns a single pet.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/pet/{petId}",
+            "method": "GET",
+            "auth": {
+                "type": "apikey",
+                "keyName": "api_key",
+                "keyLocation": "header"
+            },
+            "fields": [
+                {
+                    "name": "petId",
+                    "label": "Pet Id",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "number",
+                    "step": 1,
+                    "helpText": "ID of pet to return"
+                }
+            ],
+            "tag": "pet"
+        },
+        {
+            "id": "updatepetwithform",
+            "name": "Updates a pet in the store with form data.",
+            "description": "Updates a pet resource based on the form data.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/pet/{petId}",
+            "method": "POST",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "petId",
+                    "label": "Pet Id",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "number",
+                    "step": 1,
+                    "helpText": "ID of pet that needs to be updated"
+                },
+                {
+                    "name": "name",
+                    "label": "Name",
+                    "required": false,
+                    "paramType": "query",
+                    "type": "text",
+                    "helpText": "Name of pet that needs to be updated"
+                },
+                {
+                    "name": "status",
+                    "label": "Status",
+                    "required": false,
+                    "paramType": "query",
+                    "type": "text",
+                    "helpText": "Status of pet that needs to be updated"
+                }
+            ],
+            "tag": "pet"
+        },
+        {
+            "id": "deletepet",
+            "name": "Deletes a pet.",
+            "description": "Delete a pet.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/pet/{petId}",
+            "method": "DELETE",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "api_key",
+                    "label": "Api Key",
+                    "required": false,
+                    "paramType": "header",
+                    "type": "text"
+                },
+                {
+                    "name": "petId",
+                    "label": "Pet Id",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "number",
+                    "step": 1,
+                    "helpText": "Pet id to delete"
+                }
+            ],
+            "tag": "pet"
+        },
+        {
+            "id": "uploadfile",
+            "name": "Uploads an image.",
+            "description": "Upload image of the pet.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/pet/{petId}/uploadImage",
+            "method": "POST",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "petId",
+                    "label": "Pet Id",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "number",
+                    "step": 1,
+                    "helpText": "ID of pet to update"
+                },
+                {
+                    "name": "additionalMetadata",
+                    "label": "Additional Metadata",
+                    "required": false,
+                    "paramType": "query",
+                    "type": "text",
+                    "helpText": "Additional Metadata"
+                }
+            ],
+            "tag": "pet"
+        },
+        {
+            "id": "getinventory",
+            "name": "Returns pet inventories by status.",
+            "description": "Returns a map of status codes to quantities.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/store/inventory",
+            "method": "GET",
+            "auth": {
+                "type": "apikey",
+                "keyName": "api_key",
+                "keyLocation": "header"
+            },
+            "fields": [],
+            "tag": "store"
+        },
+        {
+            "id": "placeorder",
+            "name": "Place an order for a pet.",
+            "description": "Place a new order in the store.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/store/order",
+            "method": "POST",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "id",
+                    "label": "Id",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "exampleValue": 10,
+                    "paramType": "body"
+                },
+                {
+                    "name": "petId",
+                    "label": "Pet Id",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "exampleValue": 198772,
+                    "paramType": "body"
+                },
+                {
+                    "name": "quantity",
+                    "label": "Quantity",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "exampleValue": 7,
+                    "paramType": "body"
+                },
+                {
+                    "name": "shipDate",
+                    "label": "Ship Date",
+                    "required": false,
+                    "type": "date",
+                    "paramType": "body"
+                },
+                {
+                    "name": "status",
+                    "label": "Status",
+                    "required": false,
+                    "type": "select",
+                    "options": [
+                        {
+                            "value": "placed",
+                            "label": "placed"
+                        },
+                        {
+                            "value": "approved",
+                            "label": "approved"
+                        },
+                        {
+                            "value": "delivered",
+                            "label": "delivered"
+                        }
+                    ],
+                    "helpText": "Order Status",
+                    "exampleValue": "approved",
+                    "paramType": "body"
+                },
+                {
+                    "name": "complete",
+                    "label": "Complete",
+                    "required": false,
+                    "type": "select",
+                    "options": [
+                        {
+                            "value": true,
+                            "label": "Ja"
+                        },
+                        {
+                            "value": false,
+                            "label": "Nein"
+                        }
+                    ],
+                    "paramType": "body"
+                }
+            ],
+            "tag": "store"
+        },
+        {
+            "id": "getorderbyid",
+            "name": "Find purchase order by ID.",
+            "description": "For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/store/order/{orderId}",
+            "method": "GET",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "orderId",
+                    "label": "Order Id",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "number",
+                    "step": 1,
+                    "helpText": "ID of order that needs to be fetched"
+                }
+            ],
+            "tag": "store"
+        },
+        {
+            "id": "deleteorder",
+            "name": "Delete purchase order by identifier.",
+            "description": "For valid response try integer IDs with value < 1000. Anything above 1000 or non-integers will generate API errors.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/store/order/{orderId}",
+            "method": "DELETE",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "orderId",
+                    "label": "Order Id",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "number",
+                    "step": 1,
+                    "helpText": "ID of the order that needs to be deleted"
+                }
+            ],
+            "tag": "store"
+        },
+        {
+            "id": "createuser",
+            "name": "Create user.",
+            "description": "This can only be done by the logged in user.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/user",
+            "method": "POST",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "id",
+                    "label": "Id",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "exampleValue": 10,
+                    "paramType": "body"
+                },
+                {
+                    "name": "username",
+                    "label": "Username",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "theUser",
+                    "paramType": "body"
+                },
+                {
+                    "name": "firstName",
+                    "label": "First Name",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "John",
+                    "paramType": "body"
+                },
+                {
+                    "name": "lastName",
+                    "label": "Last Name",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "James",
+                    "paramType": "body"
+                },
+                {
+                    "name": "email",
+                    "label": "Email",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "john@email.com",
+                    "paramType": "body"
+                },
+                {
+                    "name": "password",
+                    "label": "Password",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "12345",
+                    "paramType": "body"
+                },
+                {
+                    "name": "phone",
+                    "label": "Phone",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "12345",
+                    "paramType": "body"
+                },
+                {
+                    "name": "userStatus",
+                    "label": "User Status",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "helpText": "User Status",
+                    "exampleValue": 1,
+                    "paramType": "body"
+                }
+            ],
+            "tag": "user"
+        },
+        {
+            "id": "createuserswithlistinput",
+            "name": "Creates list of users with given input array.",
+            "description": "Creates list of users with given input array.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/user/createWithList",
+            "method": "POST",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [],
+            "tag": "user"
+        },
+        {
+            "id": "loginuser",
+            "name": "Logs user into the system.",
+            "description": "Log into the system.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/user/login",
+            "method": "GET",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "username",
+                    "label": "Username",
+                    "required": false,
+                    "paramType": "query",
+                    "type": "text",
+                    "helpText": "The user name for login"
+                },
+                {
+                    "name": "password",
+                    "label": "Password",
+                    "required": false,
+                    "paramType": "query",
+                    "type": "text",
+                    "helpText": "The password for login in clear text"
+                }
+            ],
+            "tag": "user"
+        },
+        {
+            "id": "logoutuser",
+            "name": "Logs out current logged in user session.",
+            "description": "Log user out of the system.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/user/logout",
+            "method": "GET",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [],
+            "tag": "user"
+        },
+        {
+            "id": "getuserbyname",
+            "name": "Get user by user name.",
+            "description": "Get user detail based on username.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/user/{username}",
+            "method": "GET",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "username",
+                    "label": "Username",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "text",
+                    "helpText": "The name that needs to be fetched. Use user1 for testing"
+                }
+            ],
+            "tag": "user"
+        },
+        {
+            "id": "updateuser",
+            "name": "Update user resource.",
+            "description": "This can only be done by the logged in user.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/user/{username}",
+            "method": "PUT",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "username",
+                    "label": "Username",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "text",
+                    "helpText": "name that need to be deleted"
+                },
+                {
+                    "name": "id",
+                    "label": "Id",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "exampleValue": 10,
+                    "paramType": "body"
+                },
+                {
+                    "name": "username",
+                    "label": "Username",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "theUser",
+                    "paramType": "body"
+                },
+                {
+                    "name": "firstName",
+                    "label": "First Name",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "John",
+                    "paramType": "body"
+                },
+                {
+                    "name": "lastName",
+                    "label": "Last Name",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "James",
+                    "paramType": "body"
+                },
+                {
+                    "name": "email",
+                    "label": "Email",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "john@email.com",
+                    "paramType": "body"
+                },
+                {
+                    "name": "password",
+                    "label": "Password",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "12345",
+                    "paramType": "body"
+                },
+                {
+                    "name": "phone",
+                    "label": "Phone",
+                    "required": false,
+                    "type": "text",
+                    "exampleValue": "12345",
+                    "paramType": "body"
+                },
+                {
+                    "name": "userStatus",
+                    "label": "User Status",
+                    "required": false,
+                    "type": "number",
+                    "step": 1,
+                    "helpText": "User Status",
+                    "exampleValue": 1,
+                    "paramType": "body"
+                }
+            ],
+            "tag": "user"
+        },
+        {
+            "id": "deleteuser",
+            "name": "Delete user resource.",
+            "description": "This can only be done by the logged in user.",
+            "endpoint": "https://petstore3.swagger.io/api/v3/user/{username}",
+            "method": "DELETE",
+            "auth": {
+                "type": "none"
+            },
+            "fields": [
+                {
+                    "name": "username",
+                    "label": "Username",
+                    "required": true,
+                    "paramType": "path",
+                    "type": "text",
+                    "helpText": "The name that needs to be deleted"
+                }
+            ],
+            "tag": "user"
         }
     ]
 }
