@@ -1,6 +1,7 @@
 // API-Client mit Auth-Unterstützung
 
 import { addToHistory } from './storage.js';
+import { resolveVariables } from './env-store.js';
 
 const DEFAULT_TIMEOUT = 30000; // 30 Sekunden
 
@@ -91,10 +92,14 @@ export async function makeApiRequest(options) {
     useProxy = true, // CORS-Proxy standardmäßig aktiviert
     contentType = 'application/json', // Default Content-Type
     accept = '*/*', // Default Accept Header
+    envVariables = null, // Environment-Variablen für {{var}} Substitution
   } = options;
 
+  // Environment-Variablen im Endpoint auflösen
+  const resolvedEndpoint = envVariables ? resolveVariables(endpoint, envVariables) : endpoint;
+
   // Parameter nach Typ verarbeiten
-  let { finalEndpoint, bodyPayload, customHeaders } = processParameters(endpoint, payload, fields);
+  let { finalEndpoint, bodyPayload, customHeaders } = processParameters(resolvedEndpoint, payload, fields);
 
   // Headers vorbereiten
   const headers = { ...customHeaders };

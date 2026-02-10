@@ -119,14 +119,6 @@ export default function OpenAPIImportDialog({ onImport, onClose }) {
     }
   };
 
-  const methodColors = {
-    GET: '#27ae60',
-    POST: '#2980b9',
-    PUT: '#e67e22',
-    PATCH: '#f39c12',
-    DELETE: '#e74c3c',
-  };
-
   return (
     <div className="import-panel">
       <div className="import-panel-header">
@@ -204,10 +196,7 @@ export default function OpenAPIImportDialog({ onImport, onClose }) {
             <div className="import-preview-list">
               {preview.map((api, index) => (
                 <div key={index} className="import-preview-item">
-                  <span
-                    className="api-method-badge"
-                    style={{ backgroundColor: methodColors[api.method] || '#95a5a6' }}
-                  >
+                  <span className={`api-method-badge method-${api.method.toLowerCase()}`}>
                     {api.method}
                   </span>
                   <span className="import-preview-name">{api.name}</span>

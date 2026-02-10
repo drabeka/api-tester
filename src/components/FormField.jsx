@@ -244,25 +244,12 @@ export default function FormField({
   };
 
   // Parameter-Type Badge
-  const getParamTypeBadge = () => {
-    const badges = {
-      'query': { label: 'Query', color: '#3498db' },
-      'path': { label: 'Path', color: '#e67e22' },
-      'header': { label: 'Header', color: '#9b59b6' },
-      'body': { label: 'Body', color: '#95a5a6' }
-    };
-
-    const badge = badges[paramType] || badges['body'];
-
-    return (
-      <span
-        className="param-type-badge"
-        style={{ backgroundColor: badge.color }}
-      >
-        {badge.label}
-      </span>
-    );
-  };
+  const paramLabels = { query: 'Query', path: 'Path', header: 'Header', body: 'Body' };
+  const getParamTypeBadge = () => (
+    <span className={`param-type-badge param-badge-${paramType || 'body'}`}>
+      {paramLabels[paramType] || 'Body'}
+    </span>
+  );
 
   return (
     <div className={`form-group ${className}`.trim()}>

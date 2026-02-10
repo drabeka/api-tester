@@ -11,7 +11,7 @@ import EmptyState from './EmptyState.jsx';
  * @param {Function} props.onResponse - Callback mit Response-Daten
  * @param {Object} props.initialValues - Vorausgefüllte Werte (z.B. aus Historie)
  */
-export default function RequestForm({ api, onResponse, initialValues = null, domains = {} }) {
+export default function RequestForm({ api, onResponse, initialValues = null, domains = {}, envVariables = null }) {
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,6 +101,7 @@ export default function RequestForm({ api, onResponse, initialValues = null, dom
         contentType: api.contentType, // Custom Content-Type aus Config
         accept: api.accept,           // Custom Accept Header aus Config
         useProxy: api.corsProxy !== false, // Default true, false wenn explizit deaktiviert
+        envVariables, // Environment-Variablen für {{var}} Substitution
       });
 
       // Response an Parent weitergeben

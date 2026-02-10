@@ -12,10 +12,12 @@
 ## 📊 Änderungen
 
 **Dateien:**
+
 - `config/apis.json` - corsProxy: false für Demo-APIs hinzugefügt
 - `dist/bundle.js` - Neu gebaut mit aktuellen Änderungen
 
 **Betroffene APIs:**
+
 - Validation Demo API
 - Advanced Features Demo
 
@@ -45,16 +47,19 @@
 ### v1.0.9 (2026-02-08)
 
 **[FIXED]** 🐛
+
 - ✅ Demo-APIs: CORS-Proxy deaktiviert für direkten Zugriff
 - ✅ Verhindert unnötige Proxy-Requests für öffentliche APIs
 
 **[IMPROVED]** 🔧
+
 - ✅ Bessere Performance für Demo-APIs
 - ✅ Keine CORS-Fehler mehr bei Test-APIs
 
 ## 📋 Alle v1.0.8 Features bleiben erhalten
 
 Alle Features aus v1.0.8 sind weiterhin verfügbar:
+
 - ✅ Form Validation (min/max, pattern, custom errors)
 - ✅ UX Features (helpText, exampleValue, date fields)
 - ✅ Advanced Features (Sections, Conditional Fields)
@@ -68,7 +73,7 @@ Alle Features aus v1.0.8 sind weiterhin verfügbar:
 ## 🔗 Links
 
 - **Previous Release:** [v1.0.8](RELEASE_v1.0.8.md)
-- **GitHub:** https://github.com/drabeka/api-tester
+- **GitHub:** [https://github.com/drabeka/api-tester](https://github.com/drabeka/api-tester)
 
 ---
 

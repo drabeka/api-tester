@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
+import useClickOutside from '../hooks/useClickOutside.js';
 
 /**
  * API-Auswahl als Combobox mit Tag-Gruppierung
@@ -14,31 +15,16 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
   const containerRef = useRef(null);
   const inputRef = useRef(null);
 
-  // HTTP-Methoden Farben
-  const methodColors = {
-    GET: '#27ae60',
-    POST: '#2980b9',
-    PUT: '#e67e22',
-    PATCH: '#f39c12',
-    DELETE: '#e74c3c',
-  };
-
   // Ausgewählte API finden
   const selectedApi = useMemo(() => {
     return apis.find(api => api.id === selectedApiId) || null;
   }, [apis, selectedApiId]);
 
   // Klick außerhalb schließt Dropdown
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setIsOpen(false);
-        setSearchTerm('');
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside(containerRef, useCallback(() => {
+    setIsOpen(false);
+    setSearchTerm('');
+  }, []));
 
   // APIs filtern und nach Tags gruppieren
   const groupedApis = useMemo(() => {
@@ -102,10 +88,7 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
         <div className="api-combobox-trigger" onClick={handleInputClick}>
           {selectedApi ? (
             <div className="api-combobox-selected">
-              <span
-                className="api-method-badge"
-                style={{ backgroundColor: methodColors[selectedApi.method] || '#95a5a6' }}
-              >
+              <span className={`api-method-badge method-${selectedApi.method.toLowerCase()}`}>
                 {selectedApi.method}
               </span>
               <span className="api-combobox-name">{selectedApi.name}</span>
@@ -116,7 +99,7 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
           ) : (
             <span className="api-combobox-placeholder">API auswählen...</span>
           )}
-          <span className="api-combobox-arrow"></span>
+          <span className="dropdown-arrow"></span>
         </div>
       ) : (
         <div className="api-search">
@@ -127,7 +110,7 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="api-search-input"
+            className="dropdown-search-input api-search-input"
             autoFocus
           />
           {searchTerm && (
@@ -138,7 +121,7 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
 
       {/* Dropdown Liste */}
       {isOpen && (
-        <div className="api-dropdown-list">
+        <div className="dropdown-panel api-dropdown-list">
           {tagNames.map(tag => (
             <div key={tag} className="api-tag-group">
               <div
@@ -159,10 +142,7 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
                       onClick={() => handleSelect(api)}
                       title={api.description || api.endpoint}
                     >
-                      <span
-                        className="api-method-badge"
-                        style={{ backgroundColor: methodColors[api.method] || '#95a5a6' }}
-                      >
+                      <span className={`api-method-badge method-${api.method.toLowerCase()}`}>
                         {api.method}
                       </span>
                       <span className="api-item-name">{api.name}</span>

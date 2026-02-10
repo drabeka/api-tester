@@ -9,6 +9,13 @@ import History from './components/History.jsx';
 import Tabs from './components/Tabs.jsx';
 import EmptyState from './components/EmptyState.jsx';
 import OpenAPIImportDialog from './components/OpenAPIImportDialog.jsx';
+import EnvironmentManager from './components/EnvironmentManager.jsx';
+import {
+  getEnvironments,
+  saveEnvironments,
+  getActiveEnvName,
+  setActiveEnvName,
+} from './utils/env-store.js';
 
 function App() {
   const [apis, setApis] = useState([]);
@@ -20,6 +27,8 @@ function App() {
   const [error, setError] = useState(null);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [domains, setDomains] = useState({});
+  const [environments, setEnvironments] = useState(() => getEnvironments());
+  const [activeEnv, setActiveEnv] = useState(() => getActiveEnvName());
 
   // API-Konfiguration laden
   useEffect(() => {
@@ -109,6 +118,19 @@ function App() {
     }
   };
 
+  const handleUpdateEnvironments = (newEnvs) => {
+    setEnvironments(newEnvs);
+    saveEnvironments(newEnvs);
+  };
+
+  const handleChangeActiveEnv = (name) => {
+    setActiveEnv(name);
+    setActiveEnvName(name);
+  };
+
+  // Aktive Variablen für Substitution
+  const activeEnvVariables = environments.find(e => e.name === activeEnv)?.variables || null;
+
   const handleImportApis = (importedApis) => {
     const mergedApis = [...apis, ...importedApis];
     setApis(mergedApis);
@@ -163,20 +185,28 @@ function App() {
             <h1>🚀 API Test Framework</h1>
             <p className="subtitle">Flexibles Testing für REST APIs</p>
           </div>
-          <button
-            onClick={handleSaveApis}
-            className="btn-secondary btn-sm"
-            title="APIs in config/apis.json speichern"
-          >
-            💾 APIs speichern
-          </button>
-          <button
-            onClick={() => setShowImportDialog(!showImportDialog)}
-            className={`btn-secondary btn-sm ${showImportDialog ? 'active' : ''}`}
-            title="Import API from OpenAPI 3.0 Specification"
-          >
-            📥 Import OpenAPI
-          </button>
+          <div className="header-actions">
+            <button
+              onClick={handleSaveApis}
+              className="btn-secondary btn-sm"
+              title="APIs in config/apis.json speichern"
+            >
+              💾 APIs speichern
+            </button>
+            <button
+              onClick={() => setShowImportDialog(!showImportDialog)}
+              className={`btn-secondary btn-sm ${showImportDialog ? 'active' : ''}`}
+              title="Import API from OpenAPI 3.0 Specification"
+            >
+              📥 Import OpenAPI
+            </button>
+            <EnvironmentManager
+              environments={environments}
+              activeEnvName={activeEnv}
+              onChangeActive={handleChangeActiveEnv}
+              onUpdateEnvironments={handleUpdateEnvironments}
+            />
+          </div>
         </div>
       </header>
 
@@ -212,6 +242,7 @@ function App() {
                 onResponse={handleResponse}
                 initialValues={initialFormValues}
                 domains={domains}
+                envVariables={activeEnvVariables}
               />
             )}
 

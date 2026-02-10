@@ -84,7 +84,7 @@ export default function History({ onReplay }) {
           </div>
           {history.length > 0 && (
             <button
-              className="btn-danger btn-small"
+              className="btn-danger btn-sm"
               onClick={handleClearAll}
             >
               Alle löschen

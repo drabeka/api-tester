@@ -1,14 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { formatResponse } from '../utils/apiClient.js';
 import Badge from './Badge.jsx';
 
 /**
- * Response-Viewer mit Syntax-Highlighting
+ * Response-Viewer mit Syntax-Highlighting und Headers
  * @param {Object} props
  * @param {Object} props.response - Response-Objekt
  */
 export default function ResponseViewer({ response }) {
   const preRef = useRef(null);
+  const [showHeaders, setShowHeaders] = useState(false);
 
   // Einfaches JSON-Syntax-Highlighting
   const highlightJSON = (json) => {
@@ -59,6 +60,29 @@ export default function ResponseViewer({ response }) {
           </Badge>
         )}
       </div>
+
+      {/* Response Headers */}
+      {response.headers && Object.keys(response.headers).length > 0 && (
+        <div className="response-headers-section">
+          <button
+            className="response-headers-toggle"
+            onClick={() => setShowHeaders(!showHeaders)}
+          >
+            <span className="response-headers-arrow">{showHeaders ? '▾' : '▸'}</span>
+            Headers ({Object.keys(response.headers).length})
+          </button>
+          {showHeaders && (
+            <div className="response-headers-list">
+              {Object.entries(response.headers).map(([key, value]) => (
+                <div key={key} className="response-header-item">
+                  <span className="response-header-key">{key}</span>
+                  <span className="response-header-value">{value}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {response.error ? (
         <pre className="response-content error">

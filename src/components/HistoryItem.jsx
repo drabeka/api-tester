@@ -56,13 +56,13 @@ export default function HistoryItem({ item, isFavorite, onToggleFavorite, onRepl
           {isFavorite ? '⭐' : '☆'}
         </button>
         <button
-          className="btn-small btn-primary"
+          className="btn-sm btn-primary"
           onClick={() => onReplay(item)}
         >
           ↻ Wiederholen
         </button>
         <button
-          className="btn-small btn-danger"
+          className="btn-sm btn-danger"
           onClick={() => onDelete(item.id)}
         >
           🗑️ Löschen
