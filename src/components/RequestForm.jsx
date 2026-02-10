@@ -223,7 +223,7 @@ export default function RequestForm({ api, onResponse, initialValues = null, dom
   };
 
   return (
-    <form className="request-form" onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
+    <form className="request-form" onSubmit={handleSubmit} onKeyDown={handleKeyDown} noValidate>
       {api.sections ? (
         // Sections-Modus: Gruppierte Felder
         api.sections.map((section, index) => (

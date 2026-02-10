@@ -12,7 +12,7 @@ import useClickOutside from '../hooks/useClickOutside.js';
  * @param {boolean} props.required
  * @param {string} props.placeholder
  */
-export default function DomainField({ id, domain, domainName, value, onChange, required, placeholder }) {
+export default function DomainField({ id, domain, domainName, value, onChange, onBlur, required, placeholder }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [collapsedNodes, setCollapsedNodes] = useState({});
@@ -23,9 +23,12 @@ export default function DomainField({ id, domain, domainName, value, onChange, r
 
   // Klick außerhalb schließt Dropdown
   useClickOutside(containerRef, useCallback(() => {
-    setIsOpen(false);
+    setIsOpen(prev => {
+      if (prev && onBlur) onBlur();
+      return false;
+    });
     setSearchTerm('');
-  }, []));
+  }, [onBlur]));
 
   // Eintrag per Code im Baum finden (rekursiv)
   const findEntryByCode = useCallback((values, code) => {
@@ -133,6 +136,7 @@ export default function DomainField({ id, domain, domainName, value, onChange, r
       setIsOpen(false);
       setSearchTerm('');
       setHighlightedIndex(-1);
+      if (onBlur) onBlur();
       return;
     }
 

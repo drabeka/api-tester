@@ -95,11 +95,8 @@ export async function makeApiRequest(options) {
     envVariables = null, // Environment-Variablen für {{var}} Substitution
   } = options;
 
-  // Environment-Variablen im Endpoint auflösen
-  const resolvedEndpoint = envVariables ? resolveVariables(endpoint, envVariables) : endpoint;
-
   // Parameter nach Typ verarbeiten
-  let { finalEndpoint, bodyPayload, customHeaders } = processParameters(resolvedEndpoint, payload, fields);
+  let { finalEndpoint, bodyPayload, customHeaders } = processParameters(endpoint, payload, fields);
 
   // Headers vorbereiten
   const headers = { ...customHeaders };
@@ -147,6 +144,16 @@ export async function makeApiRequest(options) {
         }
       }
     }
+  }
+
+  // Environment-Variablen in Endpoint und Headers auflösen
+  if (envVariables) {
+    finalEndpoint = resolveVariables(finalEndpoint, envVariables);
+    Object.keys(headers).forEach(key => {
+      if (typeof headers[key] === 'string') {
+        headers[key] = resolveVariables(headers[key], envVariables);
+      }
+    });
   }
 
   const startTime = Date.now();

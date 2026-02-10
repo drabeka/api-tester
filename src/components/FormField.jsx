@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DomainField from './DomainField.jsx';
 
 /**
@@ -45,7 +45,7 @@ export default function FormField({
   pattern,
   children,
   className = '',
-  paramType = 'body', // 'body', 'query', 'path', 'header'
+  paramType,          // 'body', 'query', 'path', 'header'
   itemType = 'text',  // Für array: 'text', 'number', 'select', 'object'
   itemOptions = [],   // Für array + select items
   itemFields = [],    // Für array + object items
@@ -53,6 +53,64 @@ export default function FormField({
   domainName,         // Für domain: Domain-Schlüssel
 }) {
   const inputId = name || `field-${Math.random().toString(36).substring(2, 11)}`;
+
+  // Live-Validierung: State
+  const [touched, setTouched] = useState(false);
+  const [validationStatus, setValidationStatus] = useState(null); // null | 'valid' | 'error'
+
+  // Prüfen ob Feld Validierungsregeln hat
+  const hasValidation = required || pattern ||
+    min !== undefined || max !== undefined ||
+    minLength !== undefined || maxLength !== undefined;
+
+  // Einzelfeld-Validierung
+  const validateValue = (val) => {
+    if (val === undefined || val === null || val === '') {
+      return required ? 'error' : null;
+    }
+    if (pattern && (type === 'text' || type === 'textarea')) {
+      if (!new RegExp(pattern).test(String(val))) return 'error';
+    }
+    if (type === 'number') {
+      const num = parseFloat(val);
+      if (isNaN(num)) return 'error';
+      if (min !== undefined && num < min) return 'error';
+      if (max !== undefined && num > max) return 'error';
+    }
+    if (type === 'text' || type === 'textarea') {
+      const len = String(val).length;
+      if (minLength !== undefined && len < minLength) return 'error';
+      if (maxLength !== undefined && len > maxLength) return 'error';
+    }
+    return 'valid';
+  };
+
+  const handleBlur = () => {
+    if (!hasValidation) return;
+    setTouched(true);
+    setValidationStatus(validateValue(value));
+  };
+
+  const handleChange = (e) => {
+    onChange(e);
+    if (touched && hasValidation) {
+      setValidationStatus(validateValue(e.target.value));
+    }
+  };
+
+  // Validierung bei Wert-Änderung (extern oder initial)
+  useEffect(() => {
+    if (!hasValidation) return;
+    if (touched) {
+      setValidationStatus(validateValue(value));
+    } else if (required || (value !== undefined && value !== null && value !== '')) {
+      // Required-Felder sofort prüfen, oder Felder mit Initialwert
+      setTouched(true);
+      setValidationStatus(validateValue(value));
+    }
+  }, [value]);
+
+  const validationClass = hasValidation && validationStatus ? `field-${validationStatus}` : '';
 
   // Array-Rendering
   const renderArrayInput = () => {
@@ -101,7 +159,7 @@ export default function FormField({
                     <label>{subField.label}</label>
                     {subField.type === 'select' && subField.options ? (
                       <select
-                        value={(item && item[subField.name]) || ''}
+                        value={item?.[subField.name] ?? ''}
                         onChange={(e) => updateObjectField(index, subField.name, e.target.value)}
                       >
                         <option value="">-- Auswählen --</option>
@@ -112,7 +170,7 @@ export default function FormField({
                     ) : (
                       <input
                         type={subField.type === 'number' ? 'number' : 'text'}
-                        value={(item && item[subField.name]) || ''}
+                        value={item?.[subField.name] ?? ''}
                         onChange={(e) => updateObjectField(index, subField.name, e.target.value)}
                         placeholder={subField.placeholder || subField.label}
                       />
@@ -126,7 +184,7 @@ export default function FormField({
             <div key={index} className="array-item">
               {itemType === 'select' && itemOptions.length > 0 ? (
                 <select
-                  value={item || ''}
+                  value={item ?? ''}
                   onChange={(e) => updateItem(index, e.target.value)}
                 >
                   <option value="">-- Auswählen --</option>
@@ -137,7 +195,7 @@ export default function FormField({
               ) : (
                 <input
                   type={itemType === 'number' ? 'number' : 'text'}
-                  value={item || ''}
+                  value={item ?? ''}
                   onChange={(e) => updateItem(index, e.target.value)}
                   placeholder={`Item ${index + 1}`}
                 />
@@ -158,14 +216,24 @@ export default function FormField({
       return renderArrayInput();
     }
 
+    // Domain/Select: Validierung bei Auswahl
+    const handleDomainChange = (e) => {
+      onChange(e);
+      if (hasValidation) {
+        setTouched(true);
+        setValidationStatus(validateValue(e.target.value));
+      }
+    };
+
     if (type === 'domain') {
       return (
         <DomainField
           id={inputId}
           domain={domain}
           domainName={domainName}
-          value={value || ''}
-          onChange={(e) => onChange(e)}
+          value={value ?? ''}
+          onChange={handleDomainChange}
+          onBlur={handleBlur}
           required={required}
           placeholder={placeholder || '-- Auswählen --'}
         />
@@ -187,8 +255,9 @@ export default function FormField({
           id={inputId}
           domain={selectDomain}
           domainName={name}
-          value={value || ''}
-          onChange={(e) => onChange(e)}
+          value={value ?? ''}
+          onChange={handleDomainChange}
+          onBlur={handleBlur}
           required={required}
           placeholder={placeholder || '-- Auswählen --'}
         />
@@ -199,8 +268,9 @@ export default function FormField({
       return (
         <textarea
           id={inputId}
-          value={value || ''}
-          onChange={onChange}
+          value={value ?? ''}
+          onChange={handleChange}
+          onBlur={handleBlur}
           required={required}
           rows={rows}
           placeholder={placeholder}
@@ -214,8 +284,9 @@ export default function FormField({
     const inputProps = {
       type,
       id: inputId,
-      value: value || '',
-      onChange,
+      value: value ?? '',
+      onChange: handleChange,
+      onBlur: handleBlur,
       required,
       placeholder,
     };
@@ -252,21 +323,19 @@ export default function FormField({
   );
 
   return (
-    <div className={`form-group ${className}`.trim()}>
+    <div className={`form-group ${validationClass} ${className}`.trim()}>
       <label htmlFor={inputId}>
         {label}
-        {required && <span className="required">*</span>}
-        {getParamTypeBadge()}
+        {helpText && (
+          <span className="help-icon" data-tooltip={helpText}>i</span>
+        )}
+        {paramType && getParamTypeBadge()}
       </label>
 
       {renderInput()}
 
       {error && (
         <span className="error-message">{error}</span>
-      )}
-
-      {helpText && (
-        <small className="help-text">{helpText}</small>
       )}
 
       {children}
