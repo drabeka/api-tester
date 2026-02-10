@@ -1,0 +1,360 @@
+openapi: 3.0.1
+info:
+  title: PRKRating OSB Connectors
+  description: OSB Connectors for E0409/PRKRating.
+  version: 1.7.0
+  x-solution: E0409
+  x-api-platform: osb
+  x-api-audience: company-internal
+  x-api-kind: legacy-api
+  x-api-id: osb.ed.E0409.PRKRating
+  x-packageName: PRKRating
+servers:
+- url: https://esb.dev.imcplus.net
+  description: Development environment
+- url: https://esb.fat.imcplus.net
+  description: Factory test environment
+- url: https://esb.mona.imcplus.net
+  description: Monthly acceptance test environment
+- url: https://esb.uat.imcplus.net
+  description: User acceptance test environment
+- url: https://esb.imcplus.net
+  description: Productive environment
+paths:
+  /E0409_RatingPriv/PRKRating/REST/PRKRatingV1/inheritPRKRating:
+    post:
+      operationId: at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.inheritPRKRating.JWT
+      requestBody:
+        description: OSB JSON Input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.inheritPRKRating.request'
+      security:
+      - FedLogin: [
+          ]
+      - MBPlus: [
+          ]
+      - JWT: [
+          ]
+      x-sourceplatform: ReST
+      x-targetplatform: NaturalCics
+      x-pda: YRPRKAW1
+      x-programm: YRPRKSW1
+      x-serviceroute: RISCOSBC
+      x-libraryid: KRS#
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.inheritPRKRating.response'
+        '400':
+          description: Business error
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/Http400Schema'
+        '500':
+          description: Technical Error (error occurred while processing the request)
+  /E0409_RatingPriv/PRKRating/REST/PRKRatingV1/readPRKRating:
+    post:
+      operationId: at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.readPRKRating.JWT
+      requestBody:
+        description: OSB JSON Input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.readPRKRating.request'
+      security:
+      - FedLogin:
+        - OSB-YRPRKSR1
+      - MBPlus:
+        - OSB-YRPRKSR1
+      - JWT: [
+          ]
+      x-sourceplatform: ReST
+      x-targetplatform: NaturalCics
+      x-pda: YRPRKAR1
+      x-programm: YRPRKSR1
+      x-serviceroute: RISCOSBC
+      x-libraryid: KRS#
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.readPRKRating.response'
+        '400':
+          description: Business error
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/Http400Schema'
+        '500':
+          description: Technical Error (error occurred while processing the request)
+  /E0409_RatingPriv/PRKRating/REST/PRKRatingV1CORS/inheritPRKRating:
+    post:
+      operationId: at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.inheritPRKRating.JWT.cors
+      requestBody:
+        description: OSB JSON Input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.inheritPRKRating.request'
+      security:
+      - FedLogin: [
+          ]
+      - MBPlus: [
+          ]
+      - JWT: [
+          ]
+      x-sourceplatform: ReST
+      x-targetplatform: NaturalCics
+      x-pda: YRPRKAW1
+      x-programm: YRPRKSW1
+      x-serviceroute: RISCOSBC
+      x-libraryid: KRS#
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.inheritPRKRating.response'
+        '400':
+          description: Business error
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/Http400Schema'
+        '500':
+          description: Technical Error (error occurred while processing the request)
+  /E0409_RatingPriv/PRKRating/REST/PRKRatingV1CORS/readPRKRating:
+    post:
+      operationId: at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.readPRKRating.JWT.cors
+      requestBody:
+        description: OSB JSON Input
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.readPRKRating.request'
+      security:
+      - FedLogin:
+        - OSB-YRPRKSR1
+      - MBPlus:
+        - OSB-YRPRKSR1
+      - JWT: [
+          ]
+      x-sourceplatform: ReST
+      x-targetplatform: NaturalCics
+      x-pda: YRPRKAR1
+      x-programm: YRPRKSR1
+      x-serviceroute: RISCOSBC
+      x-libraryid: KRS#
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.readPRKRating.response'
+        '400':
+          description: Business error
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/Http400Schema'
+        '500':
+          description: Technical Error (error occurred while processing the request)
+components:
+  securitySchemes:
+    FedLogin:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://login.dev.sparkasse.at/sts/oauth/authorize
+          scopes:
+            OSB-YRPRKSR1: Expertcode OSB-YRPRKSR1
+    MBPlus:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://idp-e.alfa.s-mxs.net/kerberoslogin/authorize
+          scopes:
+            OSB-YRPRKSR1: Expertcode OSB-YRPRKSR1
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.inheritPRKRating.request:
+      type: object
+      properties:
+        inheritPRKRatingInp:
+          type: object
+          properties:
+            InheritPRKRatingInp:
+              $ref: '#/components/schemas/InheritPRKRatingInp'
+    at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.inheritPRKRating.response:
+      type: object
+      properties:
+        inheritPRKRatingOut:
+          type: object
+          properties:
+            InheritPRKRatingOut:
+              $ref: '#/components/schemas/InheritPRKRatingOut'
+        businessErrorBlock:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessErrorBlock'
+          maxItems: 10
+    at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.readPRKRating.request:
+      type: object
+      properties:
+        readPRKRatingInp:
+          type: object
+          properties:
+            ReadPRKRatingInp:
+              $ref: '#/components/schemas/ReadPRKRatingInp'
+    at.spardat.ratingpriv.prkrating.services.prkrating.v1.PRKRating.readPRKRating.response:
+      type: object
+      properties:
+        readPRKRtingOut:
+          type: object
+          properties:
+            ReadPRKRatingOut:
+              $ref: '#/components/schemas/ReadPRKRatingOut'
+    BusinessErrorBlock:
+      type: object
+      properties:
+        errorNumber:
+          type: string
+          maxLength: 5
+        errorText:
+          type: string
+          maxLength: 80
+        errorTime:
+          type: string
+          maxLength: 7
+        errorMessageNumber:
+          type: string
+          maxLength: 4
+    InheritPRKRatingInp:
+      type: object
+      properties:
+        customerID:
+          type: string
+          maxLength: 16
+        privatRatingID:
+          type: string
+          maxLength: 16
+    InheritPRKRatingOut:
+      type: object
+      properties:
+        creditHistoryID:
+          type: string
+          maxLength: 16
+        privatRatingID:
+          type: string
+          maxLength: 16
+        domainRiskClass:
+          type: string
+          maxLength: 2
+        codeOrigin:
+          type: string
+          maxLength: 2
+        domainCustomerClass:
+          type: string
+          maxLength: 20
+        domainRatingMethod:
+          type: string
+          maxLength: 8
+        domainDetermination:
+          type: string
+          maxLength: 1
+    ReadPRKRatingInp:
+      type: object
+      properties:
+        customerId:
+          type: string
+          maxLength: 16
+        ratingId:
+          type: string
+          maxLength: 16
+        ratingCategory:
+          type: string
+          maxLength: 1
+        ratingType:
+          type: string
+          maxLength: 1
+        ratingDate:
+          type: string
+          format: date
+        ratingTime:
+          type: string
+    ReadPRKRatingOut:
+      type: object
+      properties:
+        customerId:
+          type: string
+          maxLength: 16
+        ratingId:
+          type: string
+          maxLength: 16
+        ratingDate:
+          type: string
+          format: date
+        ratingTime:
+          type: string
+        generation:
+          type: string
+        ratingCategory:
+          type: string
+          maxLength: 1
+        ratingType:
+          type: string
+          maxLength: 1
+        riskClass:
+          type: string
+          maxLength: 2
+    Http400Schema:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+              field:
+                type: string
+              code:
+                type: string
+            required:
+            - message
+            - field
+            - code
+      required:
+      - errors
+    Http500Schema:
+      type: object
+      properties:
+        TechnicalError:
+          type: object
+          properties:
+            reason:
+              type: number
+            messageId:
+              type: string
+            description:
+              type: string
+          required:
+          - reason
+          - messageId
+          - description
+      required:
+      - TechnicalError
