@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useCallback, useRef } from 'react';
-import useClickOutside from '../hooks/useClickOutside.js';
+import React, { useState, useMemo, useRef } from 'react';
+import useDropdown from '../hooks/useDropdown.js';
 
 /**
  * API-Auswahl als Combobox mit Tag-Gruppierung
@@ -9,22 +9,14 @@ import useClickOutside from '../hooks/useClickOutside.js';
  * @param {Function} props.onSelect - Callback bei API-Auswahl
  */
 export default function ApiSelector({ apis, selectedApiId, onSelect }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const { isOpen, searchTerm, setSearchTerm, close, open, containerRef } = useDropdown();
   const [collapsedTags, setCollapsedTags] = useState({});
-  const containerRef = useRef(null);
   const inputRef = useRef(null);
 
   // Ausgewählte API finden
   const selectedApi = useMemo(() => {
     return apis.find(api => api.id === selectedApiId) || null;
   }, [apis, selectedApiId]);
-
-  // Klick außerhalb schließt Dropdown
-  useClickOutside(containerRef, useCallback(() => {
-    setIsOpen(false);
-    setSearchTerm('');
-  }, []));
 
   // APIs filtern und nach Tags gruppieren
   const groupedApis = useMemo(() => {
@@ -63,22 +55,14 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
 
   const handleSelect = (api) => {
     onSelect(api);
-    setIsOpen(false);
-    setSearchTerm('');
+    close();
   };
 
   const handleInputClick = () => {
-    setIsOpen(true);
+    open();
     setSearchTerm('');
     // Focus auf Input nach dem Öffnen
     setTimeout(() => inputRef.current?.focus(), 0);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      setIsOpen(false);
-      setSearchTerm('');
-    }
   };
 
   return (
@@ -109,7 +93,7 @@ export default function ApiSelector({ apis, selectedApiId, onSelect }) {
             placeholder="APIs suchen..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onKeyDown={(e) => { if (e.key === 'Escape') close(); }}
             className="dropdown-search-input api-search-input"
             autoFocus
           />

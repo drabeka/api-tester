@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import useClickOutside from '../hooks/useClickOutside.js';
+import React, { useState, useCallback } from 'react';
+import useDropdown from '../hooks/useDropdown.js';
 
 /**
  * Environment-Manager: Selector + Variablen-Editor
@@ -15,26 +15,27 @@ export default function EnvironmentManager({
   onChangeActive,
   onUpdateEnvironments,
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [editMode, setEditMode] = useState(false); // false = selector, true = editor
   const [editingEnv, setEditingEnv] = useState(null); // Index des bearbeiteten Environments
   const [newVarKey, setNewVarKey] = useState('');
   const [newVarValue, setNewVarValue] = useState('');
   const [newEnvName, setNewEnvName] = useState('');
-  const containerRef = useRef(null);
 
-  useClickOutside(containerRef, useCallback(() => {
-    setIsOpen(false);
+  const resetEditor = useCallback(() => {
     setEditMode(false);
     setEditingEnv(null);
-  }, []));
+  }, []);
+
+  const { isOpen, close, toggle, containerRef } = useDropdown({
+    onClose: resetEditor,
+  });
 
   const activeEnv = environments.find(e => e.name === activeEnvName);
   const varCount = activeEnv ? Object.keys(activeEnv.variables).length : 0;
 
   const handleSelectEnv = (name) => {
     onChangeActive(name === activeEnvName ? '' : name);
-    setIsOpen(false);
+    close();
   };
 
   const handleOpenEditor = (index) => {
@@ -103,20 +104,12 @@ export default function EnvironmentManager({
     onUpdateEnvironments(updated);
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      setIsOpen(false);
-      setEditMode(false);
-      setEditingEnv(null);
-    }
-  };
-
   return (
-    <div className="env-manager" ref={containerRef} onKeyDown={handleKeyDown}>
+    <div className="env-manager" ref={containerRef} onKeyDown={(e) => { if (e.key === 'Escape') close(); }}>
       {/* Trigger Button */}
       <button
         className={`env-trigger ${activeEnvName ? 'env-active' : ''}`}
-        onClick={() => { setIsOpen(!isOpen); setEditMode(false); setEditingEnv(null); }}
+        onClick={() => { toggle(); resetEditor(); }}
         title={activeEnvName ? `Environment: ${activeEnvName}` : 'Kein Environment ausgewählt'}
       >
         <span className="env-icon">⚙</span>

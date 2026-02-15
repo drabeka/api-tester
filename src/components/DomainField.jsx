@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
-import useClickOutside from '../hooks/useClickOutside.js';
+import useDropdown from '../hooks/useDropdown.js';
 
 /**
  * Domain-Feld: Tree-View Dropdown für hierarchische Domain-Werte
@@ -13,22 +13,13 @@ import useClickOutside from '../hooks/useClickOutside.js';
  * @param {string} props.placeholder
  */
 export default function DomainField({ id, domain, domainName, value, onChange, onBlur, required, placeholder }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const { isOpen, searchTerm, setSearchTerm, close, open, containerRef } = useDropdown({
+    onClose: onBlur,
+  });
   const [collapsedNodes, setCollapsedNodes] = useState({});
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const containerRef = useRef(null);
   const searchInputRef = useRef(null);
   const dropdownRef = useRef(null);
-
-  // Klick außerhalb schließt Dropdown
-  useClickOutside(containerRef, useCallback(() => {
-    setIsOpen(prev => {
-      if (prev && onBlur) onBlur();
-      return false;
-    });
-    setSearchTerm('');
-  }, [onBlur]));
 
   // Eintrag per Code im Baum finden (rekursiv)
   const findEntryByCode = useCallback((values, code) => {
@@ -101,12 +92,11 @@ export default function DomainField({ id, domain, domainName, value, onChange, o
   const handleSelect = (entry) => {
     if (entry.status !== 'V') return;
     onChange({ target: { value: entry.code } });
-    setIsOpen(false);
-    setSearchTerm('');
+    close();
   };
 
   const handleOpen = () => {
-    setIsOpen(true);
+    open();
     setSearchTerm('');
     setHighlightedIndex(-1);
     setTimeout(() => searchInputRef.current?.focus(), 0);
@@ -133,10 +123,8 @@ export default function DomainField({ id, domain, domainName, value, onChange, o
 
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
-      setIsOpen(false);
-      setSearchTerm('');
+      close();
       setHighlightedIndex(-1);
-      if (onBlur) onBlur();
       return;
     }
 
