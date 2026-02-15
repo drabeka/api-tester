@@ -3,6 +3,7 @@
 ## New Features
 
 ### Environment Variables
+
 - Environment-Manager im Header mit Selector-Dropdown
 - Environments (Development, Staging, Production) mit Key-Value Variablen
 - `{{variableName}}` Syntax in Endpoint-URLs wird automatisch aufgelöst
@@ -11,10 +12,12 @@
 - localStorage-Persistenz für Environments und aktive Auswahl
 
 ### Response Headers
+
 - Aufklappbare Response-Headers-Sektion im ResponseViewer
 - Zeigt Header-Anzahl und Key-Value Paare nach API-Aufruf
 
 ### Domain-Field Keyboard Navigation
+
 - ArrowUp/Down navigiert zu allen Knoten (V, N, S Status)
 - ArrowRight öffnet geschlossene Eltern-Knoten
 - ArrowLeft schließt geöffnete Knoten oder springt zum Eltern-Knoten
@@ -34,11 +37,13 @@
 ## Dateien
 
 ### Neu
+
 - `src/components/EnvironmentManager.jsx` - Environment Selector + Editor
 - `src/utils/env-store.js` - localStorage-Persistenz und Variable-Resolution
 - `src/hooks/useClickOutside.js` - Gemeinsamer Click-Outside Hook
 
 ### Geändert
+
 - `src/App.jsx` - Environment-State, EnvironmentManager im Header
 - `src/components/RequestForm.jsx` - envVariables an apiClient weiterreichen
 - `src/utils/apiClient.js` - `{{var}}` Substitution im Endpoint

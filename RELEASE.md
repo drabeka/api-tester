@@ -8,7 +8,7 @@ Der Git-Tag **v1.0.0** wurde bereits erstellt und gepusht.
 
 ### Option 1: Über GitHub Web-Interface
 
-1. Gehen Sie zu: https://github.com/drabeka/api-tester/releases/new
+1. Gehen Sie zu: <https://github.com/drabeka/api-tester/releases/new>
 
 2. **Tag**: Wählen Sie `v1.0.0` aus
 
@@ -68,10 +68,10 @@ Nach dem Entpacken finden Sie:
 **Built with ❤️ using React, esbuild & Node.js**
 ```
 
-5. **Attach Binary**: Laden Sie die Datei hoch:
+1. **Attach Binary**: Laden Sie die Datei hoch:
    - `c:\Data\react-projects\api-tester\release\api-tester-v1.0.0.tar.gz`
 
-6. Klicken Sie auf **Publish release**
+2. Klicken Sie auf **Publish release**
 
 ### Option 2: Mit GitHub CLI (falls installiert)
 

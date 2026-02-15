@@ -3,6 +3,7 @@
 ## Refactoring
 
 ### useDropdown Hook (NEU)
+
 - Gemeinsame Dropdown-Basismechanik aus 3 Komponenten extrahiert
 - Kapselt: `isOpen` State, `containerRef`, `searchTerm`, Click-Outside, Close-Logik
 - Optionaler `onClose` Callback fuer komponentenspezifisches Cleanup
@@ -10,6 +11,7 @@
 - Nutzt intern den bestehenden `useClickOutside` Hook
 
 ### Vereinfachte Komponenten
+
 - **ApiSelector.jsx** - 28 Zeilen entfernt: eigener `isOpen`/`searchTerm` State, `useRef`, `useClickOutside`, Escape-Handler
 - **DomainField.jsx** - 26 Zeilen entfernt: eigener `isOpen`/`searchTerm` State, `useRef`, `useClickOutside` mit `onBlur`-Callback, Escape-Handler (Arrow/Enter Navigation bleibt komponentenspezifisch)
 - **EnvironmentManager.jsx** - 29 Zeilen entfernt: eigener `isOpen` State, `useRef`, `useClickOutside` mit Editor-Reset, `handleKeyDown` Funktion (Editor-Modus bleibt komponentenspezifisch)
@@ -17,9 +19,11 @@
 ## Dateien
 
 ### Neu
+
 - `src/hooks/useDropdown.js` - Gemeinsamer Dropdown Hook (~50 Zeilen)
 
 ### Geaendert
+
 - `src/components/ApiSelector.jsx` - useDropdown statt manueller Dropdown-Logik
 - `src/components/DomainField.jsx` - useDropdown mit onClose fuer onBlur-Weiterleitung
 - `src/components/EnvironmentManager.jsx` - useDropdown mit onClose fuer Editor-Reset

@@ -5,6 +5,7 @@
 ## ✨ Neue Features
 
 ### Domain Fields
+
 - **Wiederverwendbare Domänen-Daten** (`config/domains.json`) als eigenständige Konfigurationsdatei
 - **Hierarchische Baumauswahl** mit auf-/zuklappbaren Gruppen
 - **Status-System**: V=verfügbar, N=nicht verfügbar, S=nicht mehr auswählbar (ehemals gültig)
@@ -14,11 +15,13 @@
 - Felder referenzieren Domänen per `"type": "domain", "domain": "laender"`
 
 ### Unified Dropdown Component
+
 - **Select-Felder** verwenden jetzt dieselbe DomainField-Komponente
 - **Einheitliches Look & Feel** für alle Auswahl-Felder (select + domain)
 - Natives `<select>`-Element durch Custom-Dropdown mit Suche ersetzt
 
 ### Save API Config
+
 - **Server-Endpoint** `POST /api/save-config` zum Speichern der apis.json
 - **Save-Button** im Header zum persistenten Speichern importierter APIs
 
@@ -40,7 +43,7 @@
 ## 📊 Geänderte Dateien
 
 | Datei | Änderung |
-|-------|----------|
+| ------- | ---------- |
 | `config/domains.json` | **Neu** - Domänen-Definitionen (laender, ausbildung) |
 | `src/components/DomainField.jsx` | **Neu** - Tree-View-Dropdown-Komponente |
 | `src/styles/main.css` | CSS-Variablen, !important entfernt, Domain-Styles |
@@ -81,7 +84,7 @@
 ## 🔗 Links
 
 - **Previous Release:** v1.1.3
-- **GitHub:** https://github.com/drabeka/api-tester
+- **GitHub:** <https://github.com/drabeka/api-tester>
 
 ---
 
