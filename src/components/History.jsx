@@ -8,6 +8,7 @@ import {
 } from '../utils/storage.js';
 import EmptyState from './EmptyState.jsx';
 import HistoryItem from './HistoryItem.jsx';
+import useDialog from '../hooks/useDialog.js';
 
 /**
  * Request-Historie mit Favoriten
@@ -18,6 +19,7 @@ export default function History({ onReplay }) {
   const [history, setHistory] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [filter, setFilter] = useState('all'); // 'all' | 'favorites'
+  const { showConfirm, DialogRenderer } = useDialog();
 
   const loadHistory = () => {
     const historyData = getHistory();
@@ -34,17 +36,17 @@ export default function History({ onReplay }) {
   }, []);
 
   const handleDelete = (id) => {
-    if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
+    showConfirm('Möchten Sie diesen Eintrag wirklich löschen?', () => {
       deleteHistoryItem(id);
       loadHistory();
-    }
+    });
   };
 
   const handleClearAll = () => {
-    if (confirm('Möchten Sie die gesamte Historie wirklich löschen?')) {
+    showConfirm('Möchten Sie die gesamte Historie wirklich löschen?', () => {
       clearHistory();
       loadHistory();
-    }
+    });
   };
 
   const handleToggleFavorite = (id) => {
@@ -112,6 +114,7 @@ export default function History({ onReplay }) {
           ))}
         </div>
       )}
+      <DialogRenderer />
     </div>
   );
 }

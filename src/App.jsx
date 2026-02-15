@@ -10,6 +10,7 @@ import Tabs from './components/Tabs.jsx';
 import EmptyState from './components/EmptyState.jsx';
 import OpenAPIImportDialog from './components/OpenAPIImportDialog.jsx';
 import EnvironmentManager from './components/EnvironmentManager.jsx';
+import useDialog from './hooks/useDialog.js';
 import {
   getEnvironments,
   saveEnvironments,
@@ -27,6 +28,7 @@ function App() {
   const [error, setError] = useState(null);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [domains, setDomains] = useState({});
+  const { showAlert, DialogRenderer } = useDialog();
   const [environments, setEnvironments] = useState(() => getEnvironments());
   const [activeEnv, setActiveEnv] = useState(() => getActiveEnvName());
 
@@ -111,10 +113,10 @@ function App() {
       if (!res.ok) throw new Error('Speichern fehlgeschlagen');
       const result = await res.json();
       if (result.success) {
-        alert('APIs erfolgreich gespeichert!');
+        showAlert('APIs erfolgreich gespeichert!', 'success');
       }
     } catch (err) {
-      alert('Fehler beim Speichern: ' + err.message);
+      showAlert('Fehler beim Speichern: ' + err.message, 'error', 0);
     }
   };
 
@@ -264,6 +266,8 @@ function App() {
       <footer className="app-footer">
         <p>API Test Framework v1.0 | React + esbuild</p>
       </footer>
+
+      <DialogRenderer />
     </div>
   );
 }

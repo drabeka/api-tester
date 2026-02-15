@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAuthConfig, setAuthConfig, clearAuthConfig } from '../utils/storage.js';
 import FormField from './FormField.jsx';
 import EmptyState from './EmptyState.jsx';
+import useDialog from '../hooks/useDialog.js';
 
 /**
  * Auth-Konfiguration für APIs
@@ -14,6 +15,7 @@ export default function AuthConfig({ apiId }) {
   const [apiKey, setApiKey] = useState('');
   const [keyName, setKeyName] = useState('X-API-Key');
   const [keyLocation, setKeyLocation] = useState('header');
+  const { showAlert, showConfirm, DialogRenderer } = useDialog();
 
   // Auth-Config aus LocalStorage laden
   useEffect(() => {
@@ -50,18 +52,20 @@ export default function AuthConfig({ apiId }) {
     }
 
     setAuthConfig(apiId, config);
-    alert('Auth-Konfiguration gespeichert!');
+    showAlert('Auth-Konfiguration gespeichert!', 'success');
   };
 
   const handleClear = () => {
     if (!apiId) return;
-    clearAuthConfig(apiId);
-    setAuthType('none');
-    setBearerToken('');
-    setApiKey('');
-    setKeyName('X-API-Key');
-    setKeyLocation('header');
-    alert('Auth-Konfiguration gelöscht!');
+    showConfirm('Möchten Sie die Auth-Konfiguration wirklich löschen?', () => {
+      clearAuthConfig(apiId);
+      setAuthType('none');
+      setBearerToken('');
+      setApiKey('');
+      setKeyName('X-API-Key');
+      setKeyLocation('header');
+      showAlert('Auth-Konfiguration gelöscht!', 'success');
+    });
   };
 
   if (!apiId) {
@@ -149,6 +153,7 @@ export default function AuthConfig({ apiId }) {
           Löschen
         </button>
       </div>
+      <DialogRenderer />
     </div>
   );
 }

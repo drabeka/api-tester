@@ -6,20 +6,24 @@
 ## ✨ Neue wiederverwendbare Komponenten
 
 ### 1. **Badge.jsx** ⭐ Quick Win
+
 Wiederverwendbare Badge-Komponente für Status- und Duration-Anzeigen.
 
 **Props:**
+
 - `variant`: 'status' | 'duration'
 - `type`: 'success' | 'error' (für status)
 - `children`: Badge-Inhalt
 
 **Verwendung:**
+
 ```jsx
 <Badge variant="status" type="success">HTTP 200 OK</Badge>
 <Badge variant="duration">1234ms</Badge>
 ```
 
 **Ersetzt:**
+
 - ResponseViewer.jsx (Zeilen 54-61)
 - History.jsx (Status-Badges)
 
@@ -28,14 +32,17 @@ Wiederverwendbare Badge-Komponente für Status- und Duration-Anzeigen.
 ---
 
 ### 2. **EmptyState.jsx** ⭐ Quick Win
+
 Komponente für "Keine Daten"-Zustände mit Icon und Nachricht.
 
 **Props:**
+
 - `icon`: Optional Emoji/Icon
 - `message`: Nachricht
 - `children`: Zusätzlicher Inhalt
 
 **Verwendung:**
+
 ```jsx
 <EmptyState icon="📜" message="Keine Historie vorhanden" />
 <EmptyState icon="❌" message="Fehler">
@@ -44,6 +51,7 @@ Komponente für "Keine Daten"-Zustände mit Icon und Nachricht.
 ```
 
 **Ersetzt:**
+
 - App.jsx (Error States, Zeilen 83-103)
 - History.jsx (Empty History, Zeile 107)
 - AuthConfig.jsx (No API selected, Zeile 61)
@@ -53,14 +61,17 @@ Komponente für "Keine Daten"-Zustände mit Icon und Nachricht.
 ---
 
 ### 3. **Tabs.jsx** 🎯 High Impact
+
 Wiederverwendbare Tab-Navigation.
 
 **Props:**
+
 - `tabs`: Array von `{ id, label }`
 - `activeTab`: Aktiver Tab-ID
 - `onChange`: Callback bei Tab-Wechsel
 
 **Verwendung:**
+
 ```jsx
 <Tabs
   activeTab={activeTab}
@@ -73,6 +84,7 @@ Wiederverwendbare Tab-Navigation.
 ```
 
 **Ersetzt:**
+
 - App.jsx (Tab-Buttons, Zeilen 123-141)
 
 **Code-Reduktion:** ~30 Zeilen
@@ -80,9 +92,11 @@ Wiederverwendbare Tab-Navigation.
 ---
 
 ### 4. **FormField.jsx** 🎯 High Impact
+
 Universelle Formular-Feld-Komponente mit Label, Input, Error.
 
 **Props:**
+
 - `label`: Label-Text
 - `type`: 'text' | 'number' | 'select' | 'textarea'
 - `name`: Field name/id
@@ -94,6 +108,7 @@ Universelle Formular-Feld-Komponente mit Label, Input, Error.
 - `children`: Zusätzlicher Inhalt (z.B. Hinweise)
 
 **Verwendung:**
+
 ```jsx
 <FormField
   label="API Key:"
@@ -108,6 +123,7 @@ Universelle Formular-Feld-Komponente mit Label, Input, Error.
 ```
 
 **Ersetzt:**
+
 - AuthConfig.jsx (alle Formfelder, Zeilen 71-126)
 - RequestForm.jsx (alle Formfelder, Zeilen 111-157)
 
@@ -116,9 +132,11 @@ Universelle Formular-Feld-Komponente mit Label, Input, Error.
 ---
 
 ### 5. **HistoryItem.jsx** 📜 Extracted
+
 Einzelne History-Eintrag-Komponente für bessere Code-Organisation.
 
 **Props:**
+
 - `item`: History-Item-Daten
 - `isFavorite`: Favoriten-Status
 - `onToggleFavorite`: Favorit togglen
@@ -126,6 +144,7 @@ Einzelne History-Eintrag-Komponente für bessere Code-Organisation.
 - `onDelete`: Eintrag löschen
 
 **Verwendung:**
+
 ```jsx
 <HistoryItem
   item={item}
@@ -137,6 +156,7 @@ Einzelne History-Eintrag-Komponente für bessere Code-Organisation.
 ```
 
 **Ersetzt:**
+
 - History.jsx (Item-Rendering, Zeilen 113-160)
 
 **Code-Reduktion:** ~50 Zeilen
@@ -146,6 +166,7 @@ Einzelne History-Eintrag-Komponente für bessere Code-Organisation.
 ## 📊 Statistik
 
 ### Dateien geändert
+
 - ✅ `src/components/Badge.jsx` (NEU)
 - ✅ `src/components/EmptyState.jsx` (NEU)
 - ✅ `src/components/Tabs.jsx` (NEU)
@@ -158,6 +179,7 @@ Einzelne History-Eintrag-Komponente für bessere Code-Organisation.
 - 🔧 `src/components/RequestForm.jsx` (refactored)
 
 ### Code-Metriken
+
 - **Neue Komponenten:** 5
 - **Refactored Komponenten:** 5
 - **Code-Reduktion:** ~240 Zeilen
@@ -165,6 +187,7 @@ Einzelne History-Eintrag-Komponente für bessere Code-Organisation.
 - **Wiederverwendbarkeit:** ⭐⭐⭐⭐⭐
 
 ### Vorteile
+
 ✅ **DRY-Prinzip:** Keine duplizierten UI-Patterns mehr
 ✅ **Wartbarkeit:** Änderungen nur an einer Stelle
 ✅ **Konsistenz:** Einheitliches Look & Feel garantiert
@@ -174,6 +197,7 @@ Einzelne History-Eintrag-Komponente für bessere Code-Organisation.
 ## 🔮 Zukünftige Optimierungen
 
 ### Weitere extrahierbare Komponenten
+
 1. ~~**HistoryItem.jsx**~~ ✅ - Extrahiert!
 2. **ConfirmDialog.jsx** - Modal statt native `confirm()`
 3. **LoadingSpinner.jsx** - Spinner-Komponente
