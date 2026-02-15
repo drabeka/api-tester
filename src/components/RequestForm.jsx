@@ -102,6 +102,7 @@ export default function RequestForm({ api, onResponse, initialValues = null, dom
         accept: api.accept,           // Custom Accept Header aus Config
         useProxy: api.corsProxy !== false, // Default true, false wenn explizit deaktiviert
         envVariables, // Environment-Variablen für {{var}} Substitution
+        bodyPath: api.bodyPath, // Wrapper-Pfad für verschachtelte Body-Strukturen
       });
 
       // Response an Parent weitergeben

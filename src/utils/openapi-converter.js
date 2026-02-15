@@ -70,7 +70,7 @@ function convertOperationToConfig(path, method, operation, spec, baseUrl, source
   const endpoint = baseUrl ? `${baseUrl}${path}` : getBaseUrlFromSpec(spec, sourceOrigin) + path;
 
   // Request Body Fields extrahieren
-  const bodyFields = extractFieldsFromRequestBody(operation.requestBody, spec);
+  const { fields: bodyFields, bodyPath } = extractFieldsFromRequestBody(operation.requestBody, spec);
 
   // Parameter Fields extrahieren (query, path, header)
   const parameterFields = extractFieldsFromParameters(operation.parameters, spec);
@@ -86,7 +86,7 @@ function convertOperationToConfig(path, method, operation, spec, baseUrl, source
     ? operation.tags[0]
     : 'Sonstige';
 
-  return {
+  const config = {
     id: apiId,
     name: apiName,
     description: operation.description || operation.summary || '',
@@ -96,6 +96,47 @@ function convertOperationToConfig(path, method, operation, spec, baseUrl, source
     fields: fields,
     tag: tag,
   };
+
+  // Wrapper-Pfad für verschachtelte Body-Strukturen (z.B. OSB-Pattern)
+  if (bodyPath.length > 0) {
+    config.bodyPath = bodyPath;
+  }
+
+  return config;
+}
+
+/**
+ * Entpackt Wrapper-Objekte in Schemas (z.B. OSB-Pattern).
+ * Wenn ein Schema nur eine einzige Property hat die selbst ein Object ist,
+ * wird diese Ebene entpackt und der Pfad gespeichert.
+ * @returns {{ schema: Object, bodyPath: string[] }}
+ */
+function unwrapSchema(schema, spec) {
+  const path = [];
+  let current = schema;
+
+  // Resolve $ref
+  if (current && current.$ref && spec) {
+    current = resolveRef(current.$ref, spec);
+  }
+
+  // Solange Schema ein Object mit genau einer Property ist, die selbst Object ist → entpacken
+  while (current && current.type === 'object' && current.properties) {
+    const propNames = Object.keys(current.properties);
+    if (propNames.length !== 1) break;
+
+    const propName = propNames[0];
+    let propSchema = current.properties[propName];
+    if (propSchema.$ref && spec) {
+      propSchema = resolveRef(propSchema.$ref, spec);
+    }
+    if (!propSchema || propSchema.type !== 'object' || !propSchema.properties) break;
+
+    path.push(propName);
+    current = propSchema;
+  }
+
+  return { schema: current, bodyPath: path };
 }
 
 /**
@@ -103,16 +144,17 @@ function convertOperationToConfig(path, method, operation, spec, baseUrl, source
  */
 function extractFieldsFromRequestBody(requestBody, spec) {
   if (!requestBody || !requestBody.content) {
-    return [];
+    return { fields: [], bodyPath: [] };
   }
 
   // Suche nach application/json Content-Type
   const jsonContent = requestBody.content['application/json'];
   if (!jsonContent || !jsonContent.schema) {
-    return [];
+    return { fields: [], bodyPath: [] };
   }
 
-  const schema = jsonContent.schema;
+  // Wrapper-Objekte entpacken
+  const { schema, bodyPath } = unwrapSchema(jsonContent.schema, spec);
   const fields = convertSchemaToFields(schema, [], spec);
 
   // Markiere alle Body-Fields mit paramType
@@ -120,7 +162,7 @@ function extractFieldsFromRequestBody(requestBody, spec) {
     field.paramType = 'body';
   });
 
-  return fields;
+  return { fields, bodyPath };
 }
 
 /**

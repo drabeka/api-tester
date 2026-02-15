@@ -93,10 +93,20 @@ export async function makeApiRequest(options) {
     contentType = 'application/json', // Default Content-Type
     accept = '*/*', // Default Accept Header
     envVariables = null, // Environment-Variablen für {{var}} Substitution
+    bodyPath = null, // Wrapper-Pfad für verschachtelte Body-Strukturen (z.B. OSB)
   } = options;
 
   // Parameter nach Typ verarbeiten
   let { finalEndpoint, bodyPayload, customHeaders } = processParameters(endpoint, payload, fields);
+
+  // Body in verschachtelte Wrapper-Struktur einpacken (z.B. OSB-Pattern)
+  if (bodyPath && bodyPath.length > 0 && Object.keys(bodyPayload).length > 0) {
+    let wrapped = bodyPayload;
+    for (let i = bodyPath.length - 1; i >= 0; i--) {
+      wrapped = { [bodyPath[i]]: wrapped };
+    }
+    bodyPayload = wrapped;
+  }
 
   // Headers vorbereiten
   const headers = { ...customHeaders };
