@@ -132,7 +132,11 @@ function unwrapSchema(schema, spec) {
     }
     if (!propSchema || propSchema.type !== 'object' || !propSchema.properties) break;
 
-    path.push(propName);
+    // Nur zum Pfad hinzufügen wenn anders als letzte Ebene
+    // (verhindert doppeltes Wrapping bei OSB/SOAP-Schemas mit gleichnamigen Ebenen)
+    if (path.length === 0 || path[path.length - 1] !== propName) {
+      path.push(propName);
+    }
     current = propSchema;
   }
 
