@@ -10,6 +10,8 @@ import EmptyState from './EmptyState.jsx';
  * @param {Object} props.api - API-Definition
  * @param {Function} props.onResponse - Callback mit Response-Daten
  * @param {Object} props.initialValues - Vorausgefüllte Werte (z.B. aus Historie)
+ * @param {Object} props.domains - Domains-Konfiguration
+ * @param {Object} props.envVariables - Environment-Variablen für {{var}} Substitution
  */
 export default function RequestForm({ api, onResponse, initialValues = null, domains = {}, envVariables = null }) {
   const [formData, setFormData] = useState({});
