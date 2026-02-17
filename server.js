@@ -110,6 +110,9 @@ function handleProxyRequest(req, res) {
           responseHeaders['access-control-allow-origin'] = '*';
           responseHeaders['access-control-allow-methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
           responseHeaders['access-control-allow-headers'] = 'Content-Type, Authorization, X-API-Key';
+          // Alle Response-Headers für den Browser freigeben (CORS Expose)
+          const exposeHeaders = Object.keys(proxyRes.headers).join(', ');
+          responseHeaders['access-control-expose-headers'] = exposeHeaders;
           // transfer-encoding entfernen (wird vom Proxy neu gesetzt)
           delete responseHeaders['transfer-encoding'];
 

@@ -22,7 +22,7 @@ jobs:
       - run: npm run build
 
       - name: Create ZIP
-        run: zip -r api-tester-${{ github.ref_name }}.zip config dist index.html package.json build.js start.bat sever.js
+        run: zip -r api-tester-${{ github.ref_name }}.zip config dist index.html package.json build.js start.bat server.js
 
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
