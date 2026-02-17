@@ -105,13 +105,15 @@ function handleProxyRequest(req, res) {
         });
 
         proxyRes.on('end', () => {
-          // CORS-Header hinzufügen
-          res.writeHead(proxyRes.statusCode, {
-            'Content-Type': proxyRes.headers['content-type'] || 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key'
-          });
+          // Alle Original-Response-Headers übernehmen + CORS-Header ergänzen
+          const responseHeaders = { ...proxyRes.headers };
+          responseHeaders['access-control-allow-origin'] = '*';
+          responseHeaders['access-control-allow-methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+          responseHeaders['access-control-allow-headers'] = 'Content-Type, Authorization, X-API-Key';
+          // transfer-encoding entfernen (wird vom Proxy neu gesetzt)
+          delete responseHeaders['transfer-encoding'];
+
+          res.writeHead(proxyRes.statusCode, responseHeaders);
           res.end(responseBody);
 
           console.log(`[${new Date().toISOString()}] PROXY ${method} ${targetUrl} - ${proxyRes.statusCode}`);
