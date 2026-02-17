@@ -15,7 +15,7 @@ $ErrorActionPreference = "Stop"
 $status = git status --porcelain
 if (-not $status) {
     Write-Host "Keine Aenderungen zum Committen vorhanden." -ForegroundColor Yellow
-    exit 1
+    #exit 1
 }
 
 Write-Host "=== Release v$Version ===" -ForegroundColor Cyan
